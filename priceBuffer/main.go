@@ -3,23 +3,22 @@ package main
 import (
 	"context"
 	"fmt"
+	"github.com/AndiVS/broker-api/priceBuffer/internal/model"
+	"github.com/AndiVS/broker-api/priceBuffer/internal/server"
+	"github.com/AndiVS/broker-api/priceBuffer/protocolPrice"
 	"github.com/go-redis/redis/v7"
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 	"io"
 	"net"
 	"os"
-	"priceBuffer/internal/model"
-	"priceBuffer/internal/server"
-	"priceBuffer/protocol"
 )
 
-func main()  {
+func main() {
 
 	clientRedis := conToRedis()
 	connGrpc := conToGrpc()
-	go redisConsumer (clientRedis,connGrpc)
-
+	go redisConsumer(clientRedis, connGrpc)
 
 	lis, err := net.Listen("tcp", ":50005")
 	if err != nil {
@@ -28,7 +27,7 @@ func main()  {
 
 	// create grpc server
 	grpcServer := grpc.NewServer()
-	protocol.RegisterCurrencyServiceServer(grpcServer, server.CurrencyServer )
+	protocol.RegisterCurrencyServiceServer(grpcServer, server.CurrencyServer)
 
 	log.Println("start server")
 	// and start...
@@ -36,11 +35,9 @@ func main()  {
 		log.Fatalf("failed to serve: %v", err)
 	}
 
-
-
 }
 
-func conToRedis() *redis.Client{
+func conToRedis() *redis.Client {
 	adr := fmt.Sprintf("%s:%s", os.Getenv("REDIS_HOST"), os.Getenv("REDIS_PORT"))
 	client := redis.NewClient(&redis.Options{
 		Addr:     adr,
@@ -50,7 +47,7 @@ func conToRedis() *redis.Client{
 	return client
 }
 
-func conToGrpc() *grpc.ClientConn{
+func conToGrpc() *grpc.ClientConn {
 	conn, err := grpc.Dial(":50005", grpc.WithInsecure())
 	if err != nil {
 		log.Fatalf("can not connect with server %v", err)
@@ -58,7 +55,7 @@ func conToGrpc() *grpc.ClientConn{
 	return conn
 }
 
-func redisConsumer(client *redis.Client, connGrpc  *grpc.ClientConn)  {
+func redisConsumer(client *redis.Client, connGrpc *grpc.ClientConn) {
 	for {
 		streams, err := client.XRead(&redis.XReadArgs{
 			Streams: []string{"PriceGenerator", "$"},
@@ -69,11 +66,11 @@ func redisConsumer(client *redis.Client, connGrpc  *grpc.ClientConn)  {
 		}
 
 		stream := streams[0].Messages[0]
-		processRedisStream(stream,connGrpc)
+		processRedisStream(stream, connGrpc)
 	}
 }
 
-func processRedisStream(message redis.XMessage,connGrpc  *grpc.ClientConn)  {
+func processRedisStream(message redis.XMessage, connGrpc *grpc.ClientConn) {
 
 	// create stream
 	client := protocol.NewCurrencyServiceClient(connGrpc)
@@ -101,6 +98,5 @@ func processRedisStream(message redis.XMessage,connGrpc  *grpc.ClientConn)  {
 
 	<-done //we will wait until all response is received
 	log.Printf("finished")
-
 
 }

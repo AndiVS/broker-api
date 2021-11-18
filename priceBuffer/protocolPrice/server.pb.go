@@ -2,9 +2,9 @@
 // versions:
 // 	protoc-gen-go v1.27.1
 // 	protoc        v3.17.3
-// source: protocol/server.proto
+// source: protocolPrice/server.proto
 
-package protocol
+package protocolPrice
 
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"

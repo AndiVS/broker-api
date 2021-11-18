@@ -1,15 +1,15 @@
 package server
 
 import (
-	"priceBuffer/protocol"
+	"github.com/AndiVS/broker-api/priceBuffer/protocolPrice"
 )
 
 // CurrencyServer for grpc
 type CurrencyServer struct {
-	*protocol.UnimplementedCurrencyServiceServer
+	*protocolPrice.UnimplementedCurrencyServiceServer
 }
 
-/*func (s *CurrencyServer) GetPrice(stream *protocol.GetPriceRequest) error {
+/*func (s *CurrencyServer) GetPrice(stream *protocolPrice.GetPriceRequest) error {
 	for {
 		in, err := stream.Recv()
 		if err == io.EOF {
@@ -38,7 +38,7 @@ type CurrencyServer struct {
 }
 
 
-func (s *CurrencyServer) Stream(r *protocol.GetPriceRequest, srv Streamer_StreamServer) error {
+func (s *CurrencyServer) Stream(r *protocolPrice.GetPriceRequest, srv Streamer_StreamServer) error {
 	client := s.pubsub.NewClient()
 	defer client.Close()
 

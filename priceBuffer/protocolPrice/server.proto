@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-option go_package = "./protocol";
+option go_package = "./protocolPrice";
 package proto;
 
 message Currency {
