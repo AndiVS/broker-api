@@ -21,6 +21,10 @@ type Postgres struct {
 	Pool *pgxpool.Pool
 }
 
+func NewRepository(pool *pgxpool.Pool) Transactions {
+	return &Postgres{Pool: pool}
+}
+
 // Transactions used for structuring, function for working with records
 type Transactions interface {
 	InsertTransaction(c context.Context, transaction *model.Transaction) (*uuid.UUID, error)
