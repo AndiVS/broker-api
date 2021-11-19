@@ -2,25 +2,24 @@ package main
 
 import (
 	"context"
-	"github.com/AndiVS/broker-api/transactionBroker"
-	"github.com/AndiVS/broker-api/transactionBroker/protocoBroker"
+	"github.com/AndiVS/broker-api/transactionBroker/model"
+	"github.com/AndiVS/broker-api/transactionBroker/protocolBroker"
 	"google.golang.org/grpc"
 	"log"
 	"time"
 )
 
-func main()  {
+func main() {
 	con, err := grpc.Dial(address, grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
 		log.Fatal("cannot dial server: ", err)
 	}
 
-	c := protocolBroker.NewUserServiceClient(cc2)
+	c := protocolBroker.NewTransactionServiceClient(con)
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
-
-	serch, err := c.(ctx, &protocolBroker.SearchUserRequest{Username: "admin"})
+	serch, err := c.BuyCurrency(ctx, &protocolBroker.BuyRequest{Currency: model.Currency{Name: "BTC"}})
 	if err != nil {
 		log.Panicf("could not greet: %v", err)
 	}
