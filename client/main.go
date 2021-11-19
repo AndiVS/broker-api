@@ -2,7 +2,8 @@ package main
 
 import (
 	"context"
-	"github.com/AndiVS/broker-api/transactionBroker/internal/protocolBroker"
+	"github.com/AndiVS/broker-api/transactionBroker"
+	"github.com/AndiVS/broker-api/transactionBroker/protocoBroker"
 	"google.golang.org/grpc"
 	"log"
 	"time"
