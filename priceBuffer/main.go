@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/AndiVS/broker-api/priceBuffer/internal/model"
 	"github.com/AndiVS/broker-api/priceBuffer/internal/server"
 	"github.com/AndiVS/broker-api/priceBuffer/protocolPrice"
 	"github.com/go-redis/redis/v7"
@@ -27,7 +26,7 @@ func main() {
 
 	// create grpc server
 	grpcServer := grpc.NewServer()
-	protocol.RegisterCurrencyServiceServer(grpcServer, server.CurrencyServer)
+	protocolPrice.RegisterCurrencyServiceServer(grpcServer, server.CurrencyServer)
 
 	log.Println("start server")
 	// and start...
@@ -73,8 +72,8 @@ func redisConsumer(client *redis.Client, connGrpc *grpc.ClientConn) {
 func processRedisStream(message redis.XMessage, connGrpc *grpc.ClientConn) {
 
 	// create stream
-	client := protocol.NewCurrencyServiceClient(connGrpc)
-	in := &protocol.GetPriceRequest{Name: "sad"}
+	client := protocolPrice.NewCurrencyServiceClient(connGrpc)
+	in := &protocolPrice.GetPriceRequest{Name: "sad"}
 	stream, err := client.GetPrice(context.Background(), in)
 	if err != nil {
 		log.Fatalf("open stream error %v", err)
