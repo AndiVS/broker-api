@@ -1,4 +1,4 @@
-module github.com/AndiVS/myapp3.0
+module github.com/AndiVS/broker-api/client
 
 go 1.17
 

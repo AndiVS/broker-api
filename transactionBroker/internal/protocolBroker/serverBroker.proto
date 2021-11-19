@@ -1,7 +1,7 @@
 syntax = "proto3";
 
 option go_package = "./protocolBroker";
-package proto;
+package protocolBroker;
 
 message Currency {
   string  currencyID  = 1;

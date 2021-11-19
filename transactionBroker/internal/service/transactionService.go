@@ -3,8 +3,8 @@ package service
 
 import (
 	"context"
-	"github.com/AndiVS/broker-api/transactionBroker/model"
-	"github.com/AndiVS/broker-api/transactionBroker/repository"
+	"github.com/AndiVS/broker-api/transactionBroker/internal/model"
+	"github.com/AndiVS/broker-api/transactionBroker/internal/repository"
 	"github.com/google/uuid"
 )
 

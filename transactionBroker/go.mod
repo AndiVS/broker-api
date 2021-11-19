@@ -1,4 +1,4 @@
-module serverBroker
+module github.com/AndiVS/broker-api/transactionBroker
 
 go 1.17
 

@@ -1,4 +1,4 @@
-module priceBuffer
+module github.com/AndiVS/broker-api/priceBuffer
 
 go 1.17
 
