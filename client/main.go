@@ -1,7 +1,8 @@
 package main
 
 import (
-	"transactionBroker/serverBroker/internal/protocolBroker"
+	"github.com/AndiVS/broker-api/transactionBroker/protocolBroker"
+	"google.golang.org/grpc"
 	"context"
 	"log"
 	"time"
@@ -18,7 +19,7 @@ func main()  {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
-	serch, err := c.SearchUser(ctx, &protocol.SearchUserRequest{Username: "admin"})
+	serch, err := c.(ctx, &protocolBroker.SearchUserRequest{Username: "admin"})
 	if err != nil {
 		log.Panicf("could not greet: %v", err)
 	}

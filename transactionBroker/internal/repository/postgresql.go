@@ -1,13 +1,14 @@
+// Package repository
 package repository
 
 import (
 	"context"
 	"errors"
+	"github.com/AndiVS/broker-api/transactionBroker/model"
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v4"
 	"github.com/jackc/pgx/v4/pgxpool"
 	log "github.com/sirupsen/logrus"
-	"serverBroker/internal/model"
 )
 
 var (
@@ -24,15 +25,15 @@ type Postgres struct {
 type Transactions interface {
 	InsertTransaction(c context.Context, transaction *model.Transaction) (*uuid.UUID, error)
 	SelectTransaction(c context.Context, id *uuid.UUID) (*model.Transaction, error)
-	SelectAllTransactions(c context.Context ) ([]*model.Transaction, error)
-	SelectAllTransactionWithCurrency(c context.Context, id *uuid.UUID ) ([]*model.Transaction, error)
+	SelectAllTransactions(c context.Context) ([]*model.Transaction, error)
+	SelectAllTransactionWithCurrency(c context.Context, id *uuid.UUID) ([]*model.Transaction, error)
 	UpdateTransaction(c context.Context, transaction *model.Transaction) error
 	DeleteTransaction(c context.Context, id *uuid.UUID) error
 	DeleteALLTransactions(c context.Context, id *uuid.UUID) error
 }
 
 // InsertTransaction function for inserting item from a table
-func (repos *Postgres) InsertTransaction(c context.Context, transaction *model.Transaction) (*uuid.UUID, error){
+func (repos *Postgres) InsertTransaction(c context.Context, transaction *model.Transaction) (*uuid.UUID, error) {
 	row := repos.Pool.QueryRow(c,
 		"INSERT INTO transactions (tid, cid, amount, price, time) VALUES ($1, $2, $3, $4, $5) RETURNING tid",
 		transaction.TransactionID, transaction.CurrencyID, transaction.Amount, transaction.Price, transaction.Time)
@@ -40,14 +41,14 @@ func (repos *Postgres) InsertTransaction(c context.Context, transaction *model.T
 	err := row.Scan(&transaction.TransactionID)
 	if err != nil {
 		log.Errorf("Unable to INSERT: %v", err)
-		return  &transaction.TransactionID, err
+		return &transaction.TransactionID, err
 	}
 
-	return  &transaction.TransactionID, err
+	return &transaction.TransactionID, err
 }
 
 // SelectTransaction function for selecting item from a table
-func (repos *Postgres) SelectTransaction(c context.Context, id *uuid.UUID) (*model.Transaction, error){
+func (repos *Postgres) SelectTransaction(c context.Context, id *uuid.UUID) (*model.Transaction, error) {
 	var transaction model.Transaction
 	row := repos.Pool.QueryRow(c,
 		"SELECT tid, cid, amount, price, time FROM transactions WHERE tid = $1", id)
@@ -66,7 +67,7 @@ func (repos *Postgres) SelectTransaction(c context.Context, id *uuid.UUID) (*mod
 }
 
 // SelectAllTransactions function for selecting items from a table
-func (repos *Postgres) SelectAllTransactions(c context.Context ) ([]*model.Transaction, error) {
+func (repos *Postgres) SelectAllTransactions(c context.Context) ([]*model.Transaction, error) {
 	var transactions []*model.Transaction
 
 	row, err := repos.Pool.Query(c,
@@ -85,7 +86,7 @@ func (repos *Postgres) SelectAllTransactions(c context.Context ) ([]*model.Trans
 }
 
 // SelectAllTransactionWithCurrency function for selecting items from a table
-func (repos *Postgres) SelectAllTransactionWithCurrency(c context.Context, id *uuid.UUID ) ([]*model.Transaction, error) {
+func (repos *Postgres) SelectAllTransactionWithCurrency(c context.Context, id *uuid.UUID) ([]*model.Transaction, error) {
 	var transactions []*model.Transaction
 
 	row, err := repos.Pool.Query(c,
@@ -138,4 +139,3 @@ func (repos *Postgres) DeleteALLTransactions(c context.Context, id *uuid.UUID) e
 
 	return nil
 }
-

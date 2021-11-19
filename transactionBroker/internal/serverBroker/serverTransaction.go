@@ -1,11 +1,12 @@
+// Package serverBroker
 package serverBroker
 
 import (
 	"context"
+	"github.com/AndiVS/broker-api/transactionBroker/model"
+	"github.com/AndiVS/broker-api/transactionBroker/protocolBroker"
+	"github.com/AndiVS/broker-api/transactionBroker/service"
 	"github.com/google/uuid"
-	"serverBroker/internal/model"
-	"serverBroker/internal/protocolBroker"
-	"serverBroker/internal/service"
 	"time"
 )
 
