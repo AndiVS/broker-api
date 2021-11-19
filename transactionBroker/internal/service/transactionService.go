@@ -1,9 +1,10 @@
+// Package service
 package service
 
 import (
 	"context"
-	"github.com/AndiVS/broker-api/transactionBroker/serverBroker/internal/model"
-	"github.com/AndiVS/broker-api/transactionBroker/serverBroker/internal/repository"
+	"github.com/AndiVS/broker-api/transactionBroker/model"
+	"github.com/AndiVS/broker-api/transactionBroker/repository"
 	"github.com/google/uuid"
 )
 

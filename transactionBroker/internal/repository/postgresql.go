@@ -1,9 +1,10 @@
+// Package repository
 package repository
 
 import (
 	"context"
 	"errors"
-	"github.com/AndiVS/broker-api/transactionBroker/serverBroker/internal/model"
+	"github.com/AndiVS/broker-api/transactionBroker/model"
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v4"
 	"github.com/jackc/pgx/v4/pgxpool"
