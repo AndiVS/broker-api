@@ -1,4 +1,4 @@
-module github.com/AndiVS/broker-api/client
+module github.com/AndiVS/broker-api/priceGenerator
 
 go 1.17
 

@@ -31,7 +31,7 @@ func NewTransactionServiceClient(cc grpc.ClientConnInterface) TransactionService
 
 func (c *transactionServiceClient) BuyCurrency(ctx context.Context, in *BuyRequest, opts ...grpc.CallOption) (*BuyResponse, error) {
 	out := new(BuyResponse)
-	err := c.cc.Invoke(ctx, "/proto.TransactionService/BuyCurrency", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/protocolBroker.TransactionService/BuyCurrency", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -76,7 +76,7 @@ func _TransactionService_BuyCurrency_Handler(srv interface{}, ctx context.Contex
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/proto.TransactionService/BuyCurrency",
+		FullMethod: "/protocolBroker.TransactionService/BuyCurrency",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(TransactionServiceServer).BuyCurrency(ctx, req.(*BuyRequest))
@@ -88,7 +88,7 @@ func _TransactionService_BuyCurrency_Handler(srv interface{}, ctx context.Contex
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var TransactionService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "proto.TransactionService",
+	ServiceName: "protocolBroker.TransactionService",
 	HandlerType: (*TransactionServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
