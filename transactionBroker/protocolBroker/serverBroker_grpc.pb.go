@@ -97,5 +97,5 @@ var TransactionService_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "internal/protocolBroker/serverBroker.proto",
+	Metadata: "protocolBroker/serverBroker.proto",
 }
