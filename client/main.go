@@ -71,7 +71,7 @@ func getPrices(client protocolPrice.CurrencyServiceClient) {
 			if err != nil {
 				log.Fatalf("Failed to receive a note : %v", err)
 			}
-			log.Printf("Got message %s at point(%d, %d)", in.Currency.Price, in.Currency.Name, in.Location.Longitude)
+			log.Printf("Got message %s at point(%d, %d)", in.Currency., in.Currency.Name, in.Location.Longitude)
 		}
 	}()
 	for _, note := range notes {
