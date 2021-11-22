@@ -3,11 +3,10 @@ package consumer
 import (
 	"github.com/AndiVS/broker-api/priceBuffer/protocolPrice"
 	"github.com/go-redis/redis/v7"
-	"github.com/google/uuid"
 	log "github.com/sirupsen/logrus"
 )
 
-func RedisConsumer(client *redis.Client, currencyMap map[uuid.UUID]*protocolPrice.Currency) {
+func RedisConsumer(client *redis.Client, currencyMap map[string]*protocolPrice.Currency) {
 	for {
 		streams, err := client.XRead(&redis.XReadArgs{
 			Streams: []string{"PriceGenerator", "$"},
@@ -18,7 +17,7 @@ func RedisConsumer(client *redis.Client, currencyMap map[uuid.UUID]*protocolPric
 		}
 
 		stream := streams[0].Messages[0]
-		currencyMap = stream.Values["CurrencyMap"].(map[uuid.UUID]*protocolPrice.Currency)
+		currencyMap = stream.Values["CurrencyMap"].(map[string]*protocolPrice.Currency)
 		//processRedisStream(stream, currencyMap)
 	}
 }

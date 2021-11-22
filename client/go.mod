@@ -4,8 +4,7 @@ go 1.17
 
 require (
 	github.com/AndiVS/broker-api/priceBuffer v0.0.0-20211122103317-499e1514be38
-	github.com/AndiVS/broker-api/transactionBroker v0.0.0-20211119093553-fcd6df4fb622
-	github.com/google/uuid v1.3.0
+	github.com/AndiVS/broker-api/transactionBroker v0.0.0-20211122124540-90d5ae855b55
 	google.golang.org/grpc v1.42.0
 )
 

@@ -2,7 +2,6 @@ package server
 
 import (
 	"github.com/AndiVS/broker-api/priceBuffer/protocolPrice"
-	"github.com/google/uuid"
 	"io"
 	"sync"
 )
@@ -12,10 +11,10 @@ type CurrencyServer struct {
 	protocolPrice.UnimplementedCurrencyServiceServer
 
 	mu          sync.Mutex // protects currencyMap
-	currencyMap map[uuid.UUID]*protocolPrice.Currency
+	currencyMap map[string]*protocolPrice.Currency
 }
 
-func NewCurrencyServer(currencyMap map[uuid.UUID]*protocolPrice.Currency) *CurrencyServer {
+func NewCurrencyServer(currencyMap map[string]*protocolPrice.Currency) *CurrencyServer {
 	s := &CurrencyServer{currencyMap: currencyMap}
 	return s
 }
@@ -30,10 +29,9 @@ func (s *CurrencyServer) GetPrice(stream protocolPrice.CurrencyService_GetPriceS
 			return err
 		}
 		key := in.Name
-		uKey, err := uuid.Parse(key)
 
 		s.mu.Lock()
-		resp := s.currencyMap[uKey]
+		resp := s.currencyMap[key]
 		s.mu.Unlock()
 
 		err = stream.Send(&protocolPrice.GetPriceResponse{Currency: resp})

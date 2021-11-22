@@ -6,7 +6,6 @@ import (
 	"github.com/AndiVS/broker-api/priceBuffer/internal/server"
 	"github.com/AndiVS/broker-api/priceBuffer/protocolPrice"
 	"github.com/go-redis/redis/v7"
-	"github.com/google/uuid"
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 	"net"
@@ -16,7 +15,7 @@ import (
 func main() {
 
 	clientRedis := conToRedis()
-	currencyMap := new(map[uuid.UUID]*protocolPrice.Currency)
+	currencyMap := new(map[string]*protocolPrice.Currency)
 	go consumer.RedisConsumer(clientRedis, *currencyMap)
 	conToGrpc(*currencyMap)
 }
@@ -31,7 +30,7 @@ func conToRedis() *redis.Client {
 	return client
 }
 
-func conToGrpc(currencyMap map[uuid.UUID]*protocolPrice.Currency) {
+func conToGrpc(currencyMap map[string]*protocolPrice.Currency) {
 	listener, err := net.Listen("tcp", os.Getenv("GRCP_PORT"))
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
