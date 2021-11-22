@@ -18,8 +18,6 @@ func main() {
 		DB:       0, // use default DB
 	})
 	currMap := generateCurrencyMap()
-
-	generatePrice(currMap)
 	for {
 		_, err := client.XAdd(&redis.XAddArgs{
 			Stream: "PriceGenerator",

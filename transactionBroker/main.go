@@ -9,7 +9,6 @@ import (
 	"github.com/AndiVS/broker-api/transactionBroker/internal/serverBroker"
 	"github.com/AndiVS/broker-api/transactionBroker/internal/service"
 	"github.com/AndiVS/broker-api/transactionBroker/protocolBroker"
-	"github.com/google/uuid"
 	"github.com/jackc/pgx/v4/pgxpool"
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
@@ -42,8 +41,9 @@ func main() {
 
 	log.Infof("Starting HTTP server at %s...", cfg.Port)
 
-	transactionService := service.NewTransactionService(recordRepository)
+	currencyMap := new(map[string]*protocolPrice.Currency)
 
+	transactionService := service.NewTransactionService(recordRepository, *currencyMap)
 	transactionServer := serverBroker.NewTransactionServer(transactionService)
 
 	err = runGRPCServer(transactionServer, &cfg)
@@ -51,10 +51,8 @@ func main() {
 		log.Printf("err in grpc run %v", err)
 	}
 
-	currencyMap := new(map[uuid.UUID]*protocolPrice.Currency)
-
 	connectionBuffer := connectToBuffer()
-	getPrices(connectionBuffer, *currencyMap)
+	go getPrices(connectionBuffer, *currencyMap)
 
 }
 
@@ -112,7 +110,7 @@ func connectToBuffer() protocolPrice.CurrencyServiceClient {
 	return protocolPrice.NewCurrencyServiceClient(con)
 }
 
-func getPrices(client protocolPrice.CurrencyServiceClient, currencyMap map[uuid.UUID]*protocolPrice.Currency) {
+func getPrices(client protocolPrice.CurrencyServiceClient, currencyMap map[string]*protocolPrice.Currency) {
 	notes := []*protocolPrice.GetPriceRequest{
 		{Name: "BTC"},
 	}
@@ -135,16 +133,13 @@ func getPrices(client protocolPrice.CurrencyServiceClient, currencyMap map[uuid.
 				log.Fatalf("Failed to receive a note : %v", err)
 			}
 
-			curr := protocolPrice.Currency{CurrencyID: in.Currency.CurrencyID,
+			curr := protocolPrice.Currency{
 				CurrencyName: in.Currency.CurrencyName, CurrencyPrice: in.Currency.CurrencyPrice, Time: in.Currency.Time}
-			id, err := uuid.Parse(in.Currency.CurrencyID)
-			if err != nil {
-				log.Printf("err in parsing %v", err)
-			}
-			currencyMap[id] = &curr
 
-			log.Printf("Got currency id: %v name: %v price: %v at time %v",
-				in.Currency.CurrencyID, in.Currency.CurrencyName, in.Currency.CurrencyPrice, in.Currency.Time)
+			currencyMap[in.Currency.CurrencyName] = &curr
+
+			log.Printf("Got currency name: %v price: %v at time %v",
+				in.Currency.CurrencyName, in.Currency.CurrencyPrice, in.Currency.Time)
 		}
 	}()
 	for _, note := range notes {

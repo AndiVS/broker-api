@@ -21,8 +21,8 @@ func main() {
 }
 
 func connectToBroker() protocolBroker.TransactionServiceClient {
-	addressGrcp := os.Getenv("GRPC_BROKER_ADDRESS")
-	con, err := grpc.Dial(addressGrcp, grpc.WithInsecure(), grpc.WithBlock())
+	addressGRPC := os.Getenv("GRPC_BROKER_ADDRESS")
+	con, err := grpc.Dial(addressGRPC, grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
 		log.Fatal("cannot dial server: ", err)
 	}
@@ -41,8 +41,7 @@ func connectToBuffer() protocolPrice.CurrencyServiceClient {
 }
 
 func buyCurrency(client protocolBroker.TransactionServiceClient, currency string, amount int64) {
-	cur := protocolBroker.Currency{CurrencyName: currency, Time: time.Now().String()}
-	search, err := client.BuyCurrency(context.Background(), &protocolBroker.BuyRequest{Currency: cur, CurrencyAmount: amount})
+	search, err := client.BuyCurrency(context.Background(), &protocolBroker.BuyRequest{CurrencyName: currency, CurrencyAmount: amount})
 	if err != nil {
 		log.Panicf("Error while buying currency: %v", err)
 	}
