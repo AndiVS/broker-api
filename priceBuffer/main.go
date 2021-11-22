@@ -17,7 +17,7 @@ func main() {
 	clientRedis := conToRedis()
 	currencyMap := new(map[string]*protocolPrice.Currency)
 	go consumer.RedisConsumer(clientRedis, *currencyMap)
-	conToGrpc(*currencyMap)
+	//conToGrpc(*currencyMap)
 }
 
 func conToRedis() *redis.Client {
