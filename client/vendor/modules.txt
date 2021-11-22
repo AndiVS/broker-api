@@ -1,6 +1,8 @@
-# github.com/AndiVS/broker-api/transactionBroker v0.0.0-20211119085100-f9fb91b2814b
+# github.com/AndiVS/broker-api/priceBuffer v0.0.0-20211119093553-fcd6df4fb622
 ## explicit; go 1.17
-github.com/AndiVS/broker-api/transactionBroker/internal/model
+github.com/AndiVS/broker-api/priceBuffer/protocolPrice
+# github.com/AndiVS/broker-api/transactionBroker v0.0.0-20211119093553-fcd6df4fb622
+## explicit; go 1.17
 github.com/AndiVS/broker-api/transactionBroker/protocolBroker
 # github.com/golang/protobuf v1.5.0
 ## explicit; go 1.9

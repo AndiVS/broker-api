@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/go-redis/redis/v7"
+	"github.com/google/uuid"
 	log "github.com/sirupsen/logrus"
 	"math/rand"
 	"os"
@@ -17,22 +18,29 @@ func main() {
 		DB:       0, // use default DB
 	})
 
-	startPrice := 60000
-	minRand := startPrice - 5000
-	maxRand := startPrice + 5000
+	price := generatePrice(55000)
+	for {
+		_, err := client.XAdd(&redis.XAddArgs{
+			Stream: "PriceGenerator",
+			Values: map[string]interface{}{
+				"CurrID": uuid.New(),
+				"Name":   "BTC",
+				"Price":  price,
+				"Time":   time.Now(),
+			},
+		}).Result()
+		if err != nil {
+			log.Printf("err in add in stream %v", err)
+		}
+		time.Sleep(5 * time.Second)
+		price = generatePrice(price)
+	}
+}
+
+func generatePrice(currentPrice int) int {
+	minRand := currentPrice - 5000
+	maxRand := currentPrice + 5000
 
 	rand.Seed(time.Now().UTC().UnixNano())
-	price := rand.Intn(maxRand-minRand) + minRand
-
-	_, err := client.XAdd(&redis.XAddArgs{
-		Stream: "PriceGenerator",
-		Values: map[string]interface{}{
-			"Name":  "BTC",
-			"price": price,
-			"time":  time.Now(),
-		},
-	}).Result()
-	if err != nil {
-		log.Printf("err in add in stream %v", err)
-	}
+	return rand.Intn(maxRand-minRand) + minRand
 }

@@ -5,8 +5,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="70bb0b2f-3a8a-421a-b22b-70e15185ad44" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/../transactionBroker/protocolBroker/serverBroker.pb.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../transactionBroker/protocolBroker/serverBroker_grpc.pb.go" beforeDir="false" />
+      <change afterPath="$PROJECT_DIR$/vendor/github.com/AndiVS/broker-api/transactionBroker/model/currencyModel.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vendor/github.com/AndiVS/broker-api/transactionBroker/model/transactionModel.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vendor/github.com/AndiVS/broker-api/transactionBroker/internal/model/currencyModel.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/vendor/github.com/AndiVS/broker-api/transactionBroker/internal/model/transactionModel.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/vendor/modules.txt" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/modules.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
