@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
+	"github.com/AndiVS/broker-api/priceBuffer/protocolPrice"
 	"github.com/go-redis/redis/v7"
-	"github.com/google/uuid"
 	log "github.com/sirupsen/logrus"
 	"math/rand"
 	"os"
@@ -17,30 +17,41 @@ func main() {
 		Password: "",
 		DB:       0, // use default DB
 	})
+	currMap := generateCurrencyMap()
 
-	price := generatePrice(55000)
+	generatePrice(currMap)
 	for {
 		_, err := client.XAdd(&redis.XAddArgs{
 			Stream: "PriceGenerator",
 			Values: map[string]interface{}{
-				"CurrID": uuid.New(),
-				"Name":   "BTC",
-				"Price":  price,
-				"Time":   time.Now(),
+				"CurrencyMap": currMap,
 			},
 		}).Result()
 		if err != nil {
 			log.Printf("err in add in stream %v", err)
 		}
 		time.Sleep(5 * time.Second)
-		price = generatePrice(price)
+		generatePrice(currMap)
 	}
 }
 
-func generatePrice(currentPrice int) int {
-	minRand := currentPrice - 5000
-	maxRand := currentPrice + 5000
+func generatePrice(currMap map[string]*protocolPrice.Currency) {
+	for _, v := range currMap {
+		rand.Seed(time.Now().UTC().UnixNano())
+		a := rand.Float32() * 0.1
+		b := float32(rand.Intn(2) - 1)
+		v.CurrencyPrice *= a*b + 1
+	}
+}
 
-	rand.Seed(time.Now().UTC().UnixNano())
-	return rand.Intn(maxRand-minRand) + minRand
+func generateCurrencyMap() map[string]*protocolPrice.Currency {
+	currMap := make(map[string]*protocolPrice.Currency)
+
+	currMap["BTC"] = &protocolPrice.Currency{
+		CurrencyName:  "BTC",
+		CurrencyPrice: 55555.555,
+		Time:          time.Now().String(),
+	}
+
+	return currMap
 }
