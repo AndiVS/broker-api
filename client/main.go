@@ -4,7 +4,6 @@ import (
 	"context"
 	"github.com/AndiVS/broker-api/priceBuffer/protocolPrice"
 	"github.com/AndiVS/broker-api/transactionBroker/protocolBroker"
-	"github.com/google/uuid"
 	"google.golang.org/grpc"
 	"io"
 	"log"
@@ -15,17 +14,9 @@ import (
 func main() {
 	connectionBroker := connectToBroker()
 	connectionBuffer := connectToBuffer()
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
-	defer cancel()
 
 	// todo balance check
-	cur := protocolBroker.Currency{CurrencyID: uuid.New().String(), CurrencyName: "BTC", CurrencyPrice: 50000.000, Time: time.Now().String()}
-	search, err := connectionBroker.BuyCurrency(ctx, &protocolBroker.BuyRequest{Currency: &cur, CurrencyAmount: 64})
-	if err != nil {
-		log.Panicf("Error while buying currency: %v", err)
-	}
-	log.Printf("Transaction completed: %s", search.GetTransactionID())
-
+	buyCurrency(connectionBroker, "BTC", 64)
 	getPrices(connectionBuffer)
 }
 
@@ -47,6 +38,15 @@ func connectToBuffer() protocolPrice.CurrencyServiceClient {
 	}
 
 	return protocolPrice.NewCurrencyServiceClient(con)
+}
+
+func buyCurrency(client protocolBroker.TransactionServiceClient, currency string, amount int64) {
+	cur := protocolBroker.Currency{CurrencyName: currency, Time: time.Now().String()}
+	search, err := client.BuyCurrency(context.Background(), &protocolBroker.BuyRequest{Currency: cur, CurrencyAmount: amount})
+	if err != nil {
+		log.Panicf("Error while buying currency: %v", err)
+	}
+	log.Printf("Transaction completed: %s", search.GetTransactionID())
 }
 
 func getPrices(client protocolPrice.CurrencyServiceClient) {
@@ -71,7 +71,9 @@ func getPrices(client protocolPrice.CurrencyServiceClient) {
 			if err != nil {
 				log.Fatalf("Failed to receive a note : %v", err)
 			}
-			log.Printf("Got message %s at point(%d, %d)", in.Currency., in.Currency.Name, in.Location.Longitude)
+
+			log.Printf("Got currency name: %v price: %v at time %v",
+				in.Currency.CurrencyName, in.Currency.CurrencyPrice, in.Currency.Time)
 		}
 	}()
 	for _, note := range notes {

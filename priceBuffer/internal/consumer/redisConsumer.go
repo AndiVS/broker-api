@@ -5,7 +5,6 @@ import (
 	"github.com/go-redis/redis/v7"
 	"github.com/google/uuid"
 	log "github.com/sirupsen/logrus"
-	"time"
 )
 
 func RedisConsumer(client *redis.Client, currencyMap map[uuid.UUID]*protocolPrice.Currency) {
@@ -19,10 +18,12 @@ func RedisConsumer(client *redis.Client, currencyMap map[uuid.UUID]*protocolPric
 		}
 
 		stream := streams[0].Messages[0]
-		processRedisStream(stream, currencyMap)
+		currencyMap = stream.Values["CurrencyMap"].(map[uuid.UUID]*protocolPrice.Currency)
+		//processRedisStream(stream, currencyMap)
 	}
 }
 
+/*
 func processRedisStream(message redis.XMessage, currencyMap map[uuid.UUID]*protocolPrice.Currency) {
 	currencyID := message.Values["CurrID"].(uuid.UUID)
 	currencyName := message.Values["Name"].(string)
@@ -34,3 +35,4 @@ func processRedisStream(message redis.XMessage, currencyMap map[uuid.UUID]*proto
 
 	currencyMap[currencyID] = &curr
 }
+*/

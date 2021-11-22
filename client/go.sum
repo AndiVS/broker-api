@@ -1,7 +1,7 @@
 cloud.google.com/go v0.26.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
 cloud.google.com/go v0.34.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
-github.com/AndiVS/broker-api/priceBuffer v0.0.0-20211119093553-fcd6df4fb622 h1:I9+wT+sV9CkJsfqTyfyFoM8FpqrajmX/0da2yW7njLc=
-github.com/AndiVS/broker-api/priceBuffer v0.0.0-20211119093553-fcd6df4fb622/go.mod h1:4DLFHMfFdk868rZ567xDzBsKJqZa/fMSXo9rxdFAPOE=
+github.com/AndiVS/broker-api/priceBuffer v0.0.0-20211122103317-499e1514be38 h1:xfQTaUgwyc2XAeX2I0MsDRiqK/BxtfhdqPiQL0ZdYRQ=
+github.com/AndiVS/broker-api/priceBuffer v0.0.0-20211122103317-499e1514be38/go.mod h1:XmYO/iEnS6hMU89eGuBMhOpUDb+ulC0f1NqgpUuph5g=
 github.com/AndiVS/broker-api/transactionBroker v0.0.0-20211119093553-fcd6df4fb622 h1:7QYbmd60+/99YnTh84+r57lgYGyRRthqI+UP0O79iTo=
 github.com/AndiVS/broker-api/transactionBroker v0.0.0-20211119093553-fcd6df4fb622/go.mod h1:/k3RiYCSBj5qp58cNxKh6tEGC15S11oxugSWlV/hy2A=
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=

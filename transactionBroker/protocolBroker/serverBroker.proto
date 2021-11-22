@@ -3,23 +3,8 @@ syntax = "proto3";
 option go_package = "./protocolBroker";
 package protocolBroker;
 
-message Currency {
-  string  currencyID  = 1;
-  string  currencyName  = 2;
-  float   currencyPrice = 3;
-  string  time = 4;
-}
-
-message Transaction  {
-  string  transactionID = 1;
-  string  currencyID = 2;
-  int64   currencyAmount = 3;
-  float   currencyPrice = 4;
-  string  time = 5;
-}
-
 message BuyRequest {
-  Currency  currency = 1;
+  string    currencyName = 1;
   int64     currencyAmount = 2;
 }
 
