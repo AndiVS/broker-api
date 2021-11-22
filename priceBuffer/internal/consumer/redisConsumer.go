@@ -17,7 +17,8 @@ func RedisConsumer(client *redis.Client, currencyMap map[string]*protocolPrice.C
 		}
 
 		stream := streams[0].Messages[0]
-		currencyMap = stream.Values["CurrencyMap"].(map[string]*protocolPrice.Currency)
+		cur := stream.Values["Currency"].(protocolPrice.Currency)
+		currencyMap[cur.CurrencyName] = &cur
 		//processRedisStream(stream, currencyMap)
 	}
 }
