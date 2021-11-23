@@ -12,12 +12,12 @@ import (
 )
 
 func main() {
-	connectionBroker := connectToBroker()
-	connectionBuffer := connectToBuffer()
 
-	// todo balance check
+	connectionBuffer := connectToBuffer()
+	go getPrices(connectionBuffer)
+	connectionBroker := connectToBroker()
 	buyCurrency(connectionBroker, "BTC", 64)
-	getPrices(connectionBuffer)
+
 }
 
 func connectToBroker() protocolBroker.TransactionServiceClient {
@@ -31,7 +31,8 @@ func connectToBroker() protocolBroker.TransactionServiceClient {
 }
 
 func connectToBuffer() protocolPrice.CurrencyServiceClient {
-	addressGrcp := os.Getenv("GRPC_BUFFER_ADDRESS")
+	//addressGrcp := os.Getenv("GRPC_BUFFER_ADDRESS")
+	addressGrcp := "localhost:8081"
 	con, err := grpc.Dial(addressGrcp, grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
 		log.Fatal("cannot dial server: ", err)
@@ -52,9 +53,7 @@ func getPrices(client protocolPrice.CurrencyServiceClient) {
 	notes := []*protocolPrice.GetPriceRequest{
 		{Name: "BTC"},
 	}
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-	stream, err := client.GetPrice(ctx)
+	stream, err := client.GetPrice(context.Background())
 	if err != nil {
 		log.Fatalf("%v.RouteChat(_) = _, %v", client, err)
 	}
@@ -71,14 +70,17 @@ func getPrices(client protocolPrice.CurrencyServiceClient) {
 				log.Fatalf("Failed to receive a note : %v", err)
 			}
 
-			log.Printf("Got currency name: %v price: %v at time %v",
+			log.Printf("Got currency data Name: %v Price: %v at time %v",
 				in.Currency.CurrencyName, in.Currency.CurrencyPrice, in.Currency.Time)
 		}
 	}()
-	for _, note := range notes {
-		if err := stream.Send(note); err != nil {
-			log.Fatalf("Failed to send a note: %v", err)
+	for {
+		for _, note := range notes {
+			if err := stream.Send(note); err != nil {
+				log.Fatalf("Failed to send a note: %v", err)
+			}
 		}
+		time.Sleep(5 * time.Second)
 	}
 	stream.CloseSend()
 	<-waitc

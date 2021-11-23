@@ -8,33 +8,37 @@
       <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vendor/github.com/AndiVS/broker-api/transactionBroker/protocolBroker/serverBroker.pb.go" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/github.com/AndiVS/broker-api/transactionBroker/protocolBroker/serverBroker.pb.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vendor/github.com/AndiVS/broker-api/transactionBroker/protocolBroker/serverBroker.proto" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/github.com/AndiVS/broker-api/transactionBroker/protocolBroker/serverBroker.proto" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vendor/github.com/google/uuid/.travis.yml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/vendor/github.com/google/uuid/CONTRIBUTING.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/vendor/github.com/google/uuid/CONTRIBUTORS" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/vendor/github.com/google/uuid/LICENSE" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/vendor/github.com/google/uuid/README.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/vendor/github.com/google/uuid/dce.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/vendor/github.com/google/uuid/doc.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/vendor/github.com/google/uuid/hash.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/vendor/github.com/google/uuid/marshal.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/vendor/github.com/google/uuid/node.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/vendor/github.com/google/uuid/node_js.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/vendor/github.com/google/uuid/node_net.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/vendor/github.com/google/uuid/null.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/vendor/github.com/google/uuid/sql.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/vendor/github.com/google/uuid/time.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/vendor/github.com/google/uuid/util.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/vendor/github.com/google/uuid/uuid.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/vendor/github.com/google/uuid/version1.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/vendor/github.com/google/uuid/version4.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/vendor/github.com/AndiVS/broker-api/priceBuffer/protocolPrice/serverPrice.pb.go" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/github.com/AndiVS/broker-api/priceBuffer/protocolPrice/serverPrice.pb.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vendor/github.com/AndiVS/broker-api/priceBuffer/protocolPrice/serverPrice.proto" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/github.com/AndiVS/broker-api/priceBuffer/protocolPrice/serverPrice.proto" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/vendor/modules.txt" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/modules.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../priceBuffer/internal/consumer/redisConsumer.go" beforeDir="false" afterPath="$PROJECT_DIR$/../priceBuffer/internal/consumer/redisConsumer.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../priceBuffer/internal/server/serverCurrency.go" beforeDir="false" afterPath="$PROJECT_DIR$/../priceBuffer/internal/server/serverCurrency.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../priceBuffer/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/../priceBuffer/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../transactionBroker/protocolBroker/serverBroker.pb.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../transactionBroker/protocolBroker/serverBroker_grpc.pb.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../priceGenerator/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/../priceGenerator/go.mod" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../priceGenerator/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/../priceGenerator/go.sum" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../priceGenerator/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/../priceGenerator/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../priceGenerator/vendor/github.com/AndiVS/broker-api/priceBuffer/protocolPrice/serverPrice.pb.go" beforeDir="false" afterPath="$PROJECT_DIR$/../priceGenerator/vendor/github.com/AndiVS/broker-api/priceBuffer/protocolPrice/serverPrice.pb.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../priceGenerator/vendor/github.com/AndiVS/broker-api/priceBuffer/protocolPrice/serverPrice.proto" beforeDir="false" afterPath="$PROJECT_DIR$/../priceGenerator/vendor/github.com/AndiVS/broker-api/priceBuffer/protocolPrice/serverPrice.proto" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../priceGenerator/vendor/github.com/google/uuid/.travis.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../priceGenerator/vendor/github.com/google/uuid/CONTRIBUTING.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../priceGenerator/vendor/github.com/google/uuid/CONTRIBUTORS" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../priceGenerator/vendor/github.com/google/uuid/LICENSE" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../priceGenerator/vendor/github.com/google/uuid/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../priceGenerator/vendor/github.com/google/uuid/dce.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../priceGenerator/vendor/github.com/google/uuid/doc.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../priceGenerator/vendor/github.com/google/uuid/hash.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../priceGenerator/vendor/github.com/google/uuid/marshal.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../priceGenerator/vendor/github.com/google/uuid/node.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../priceGenerator/vendor/github.com/google/uuid/node_js.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../priceGenerator/vendor/github.com/google/uuid/node_net.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../priceGenerator/vendor/github.com/google/uuid/null.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../priceGenerator/vendor/github.com/google/uuid/sql.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../priceGenerator/vendor/github.com/google/uuid/time.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../priceGenerator/vendor/github.com/google/uuid/util.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../priceGenerator/vendor/github.com/google/uuid/uuid.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../priceGenerator/vendor/github.com/google/uuid/version1.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../priceGenerator/vendor/github.com/google/uuid/version4.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../priceGenerator/vendor/modules.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../priceGenerator/vendor/modules.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
