@@ -14,6 +14,6 @@ message GetPriceRequest { string name = 1; }
 message GetPriceResponse { Currency currency = 1; }
 
 service CurrencyService {
-  rpc GetPrice(stream GetPriceRequest) returns (stream GetPriceResponse) {
+  rpc GetPrice(GetPriceRequest) returns (stream GetPriceResponse) {
   };
 }

@@ -4,10 +4,9 @@ option go_package = "./protocolPrice";
 package protocolPrice;
 
 message Currency {
-  string  currencyID  = 1;
-  string  currencyName  = 2;
-  float   currencyPrice = 3;
-  string  time = 4;
+  string  currencyName  = 1;
+  float   currencyPrice = 2;
+  string  time = 3;
 }
 
 message GetPriceRequest { string name = 1; }

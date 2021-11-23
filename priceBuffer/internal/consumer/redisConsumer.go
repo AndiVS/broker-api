@@ -4,11 +4,23 @@ import (
 	"github.com/AndiVS/broker-api/priceBuffer/protocolPrice"
 	"github.com/go-redis/redis/v7"
 	log "github.com/sirupsen/logrus"
+	"sync"
 )
 
-func RedisConsumer(client *redis.Client, currencyMap map[string]*protocolPrice.Currency) {
+// RedisStream for grpc
+type RedisStream struct {
+	client      *redis.Client
+	mu          *sync.Mutex // protects currencyMap
+	currencyMap map[string]protocolPrice.Currency
+}
+
+func NewRedisStream(client *redis.Client, mu *sync.Mutex, currencyMap map[string]protocolPrice.Currency) *RedisStream {
+	return &RedisStream{client: client, mu: mu, currencyMap: currencyMap}
+}
+
+func (s *RedisStream) RedisConsumer() {
 	for {
-		streams, err := client.XRead(&redis.XReadArgs{
+		streams, err := s.client.XRead(&redis.XReadArgs{
 			Streams: []string{"PriceGenerator", "$"},
 		}).Result()
 
@@ -17,22 +29,17 @@ func RedisConsumer(client *redis.Client, currencyMap map[string]*protocolPrice.C
 		}
 
 		stream := streams[0].Messages[0]
-		cur := stream.Values["Currency"].(protocolPrice.Currency)
-		currencyMap[cur.CurrencyName] = &cur
-		//processRedisStream(stream, currencyMap)
+
+		cur := new(protocolPrice.Currency)
+
+		err = cur.UnmarshalBinary([]byte(stream.Values["Currency"].(string)))
+		if err != nil {
+			log.Printf("err %v ", err)
+		}
+
+		s.mu.Lock()
+		s.currencyMap[cur.CurrencyName] = *cur
+		s.mu.Unlock()
+		log.Printf("Get new data CurrencyName: %v, CurrencyPrice: %v, Time: %v", cur.CurrencyName, cur.CurrencyPrice, cur.Time)
 	}
 }
-
-/*
-func processRedisStream(message redis.XMessage, currencyMap map[uuid.UUID]*protocolPrice.Currency) {
-	currencyID := message.Values["CurrID"].(uuid.UUID)
-	currencyName := message.Values["Name"].(string)
-	currencyPrice := message.Values["Price"].(float32)
-	currencyTime := message.Values["Time"].(time.Time)
-
-	curr := protocolPrice.Currency{CurrencyID: currencyID.String(),
-		CurrencyName: currencyName, CurrencyPrice: currencyPrice, Time: currencyTime.String()}
-
-	currencyMap[currencyID] = &curr
-}
-*/

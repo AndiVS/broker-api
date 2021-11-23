@@ -6,20 +6,19 @@ import (
 	"sync"
 )
 
-// CurrencyServer for grpc
-type CurrencyServer struct {
+// GRCPServer for grpc
+type GRCPServer struct {
 	protocolPrice.UnimplementedCurrencyServiceServer
 
-	mu          sync.Mutex // protects currencyMap
-	currencyMap map[string]*protocolPrice.Currency
+	mu          *sync.Mutex // protects currencyMap
+	currencyMap map[string]protocolPrice.Currency
 }
 
-func NewCurrencyServer(currencyMap map[string]*protocolPrice.Currency) *CurrencyServer {
-	s := &CurrencyServer{currencyMap: currencyMap}
-	return s
+func NewCurrencyServer(mu *sync.Mutex, currencyMap map[string]protocolPrice.Currency) *GRCPServer {
+	return &GRCPServer{mu: mu, currencyMap: currencyMap}
 }
 
-func (s *CurrencyServer) GetPrice(stream protocolPrice.CurrencyService_GetPriceServer) error {
+func (s *GRCPServer) GetPrice(stream protocolPrice.CurrencyService_GetPriceServer) error {
 	for {
 		in, err := stream.Recv()
 		if err == io.EOF {
@@ -34,7 +33,7 @@ func (s *CurrencyServer) GetPrice(stream protocolPrice.CurrencyService_GetPriceS
 		resp := s.currencyMap[key]
 		s.mu.Unlock()
 
-		err = stream.Send(&protocolPrice.GetPriceResponse{Currency: resp})
+		err = stream.Send(&protocolPrice.GetPriceResponse{Currency: &resp})
 		if err != nil {
 			return err
 		}

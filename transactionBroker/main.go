@@ -52,7 +52,7 @@ func main() {
 	}
 
 	connectionBuffer := connectToBuffer()
-	go getPrices(connectionBuffer, *currencyMap)
+	getPrices(connectionBuffer)
 
 }
 
@@ -110,7 +110,7 @@ func connectToBuffer() protocolPrice.CurrencyServiceClient {
 	return protocolPrice.NewCurrencyServiceClient(con)
 }
 
-func getPrices(client protocolPrice.CurrencyServiceClient, currencyMap map[string]*protocolPrice.Currency) {
+func getPrices(client protocolPrice.CurrencyServiceClient) {
 	notes := []*protocolPrice.GetPriceRequest{
 		{Name: "BTC"},
 	}
@@ -142,11 +142,11 @@ func getPrices(client protocolPrice.CurrencyServiceClient, currencyMap map[strin
 				in.Currency.CurrencyName, in.Currency.CurrencyPrice, in.Currency.Time)
 		}
 	}()
-	for _, note := range notes {
+	/*	for _, note := range notes {
 		if err := stream.Send(note); err != nil {
 			log.Fatalf("Failed to send a note: %v", err)
 		}
-	}
+	}*/
 	stream.CloseSend()
 	<-waitc
 }
