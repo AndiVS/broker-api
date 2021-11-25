@@ -6,23 +6,14 @@ import (
 	"github.com/go-redis/redis/v7"
 	log "github.com/sirupsen/logrus"
 	"math/rand"
+	"os"
 	"time"
 )
 
 const timeFormat = "2006-01-02 15:04:05.000000000"
 
 func main() {
-	//adr := fmt.Sprintf("%s:%s", os.Getenv("REDIS_HOST"), os.Getenv("REDIS_PORT"))
-	adr := fmt.Sprintf("%s:%s", "172.28.1.1", "6379")
-	client := redis.NewClient(&redis.Options{
-		Addr:     adr,
-		Password: "",
-		DB:       0, // use default DB
-	})
-	_, err := client.Ping().Result()
-	if err != nil {
-		log.Printf("err in ping redis conn %v", err)
-	}
+	client := connectToRedis()
 	currMap := generateCurrencyMap()
 
 	for {
@@ -38,13 +29,28 @@ func main() {
 	}
 }
 
+func connectToRedis() *redis.Client {
+	adr := fmt.Sprintf("%s%s", os.Getenv("REDIS_HOST"), os.Getenv("REDIS_PORT"))
+	//adr := fmt.Sprintf("%s:%s", "172.28.1.1", "6379")
+	client := redis.NewClient(&redis.Options{
+		Addr:     adr,
+		Password: "",
+		DB:       0, // use default DB
+	})
+	_, err := client.Ping().Result()
+	if err != nil {
+		log.Printf("err in ping redis conn %v", err)
+	}
+	return client
+}
+
 func generatePrice(currMap map[string]interface{}) {
 	for _, v := range currMap {
 		rand.Seed(time.Now().UTC().UnixNano())
 		a := rand.Float32() * 0.01
 		b := float32(rand.Intn(3) - 1)
-		v.(*protocolPrice.Currency).CurrencyPrice *= a*b + 1
-		v.(*protocolPrice.Currency).Time = time.Now().Format(timeFormat)
+		v.(*model.Currency).CurrencyPrice *= a*b + 1
+		v.(*model.Currency).Time = time.Now().Format(timeFormat)
 	}
 }
 
@@ -52,12 +58,12 @@ func generateCurrencyMap() map[string]interface{} {
 	//currMap := make(map[string]*protocolPrice.Currency)
 	currMap := make(map[string]interface{})
 
-	currMap["BTC"] = &protocolPrice.Currency{
+	currMap["BTC"] = &model.Currency{
 		CurrencyName:  "BTC",
 		CurrencyPrice: 56000.555,
 		Time:          time.Now().Format(timeFormat),
 	}
-	currMap["ETH"] = &protocolPrice.Currency{
+	currMap["ETH"] = &model.Currency{
 		CurrencyName:  "ETH",
 		CurrencyPrice: 4300.555,
 		Time:          time.Now().Format(timeFormat),

@@ -4,6 +4,8 @@ github.com/AndiVS/broker-api/priceBuffer v0.0.0-20211122124540-90d5ae855b55 h1:m
 github.com/AndiVS/broker-api/priceBuffer v0.0.0-20211122124540-90d5ae855b55/go.mod h1:XmYO/iEnS6hMU89eGuBMhOpUDb+ulC0f1NqgpUuph5g=
 github.com/AndiVS/broker-api/priceBuffer v0.0.0-20211123152350-4ecea9f178e6 h1:okFMaUqk+6AdcReG+o4cw+E1/C5YIW9/HSvwCVUSSaU=
 github.com/AndiVS/broker-api/priceBuffer v0.0.0-20211123152350-4ecea9f178e6/go.mod h1:XmYO/iEnS6hMU89eGuBMhOpUDb+ulC0f1NqgpUuph5g=
+github.com/AndiVS/broker-api/priceBuffer v0.0.0-20211125123255-50a645cfda81 h1:W6mlz3O4M82jM312TJDav4T0JF/6csPlsotWEa86aP8=
+github.com/AndiVS/broker-api/priceBuffer v0.0.0-20211125123255-50a645cfda81/go.mod h1:XmYO/iEnS6hMU89eGuBMhOpUDb+ulC0f1NqgpUuph5g=
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
 github.com/Masterminds/semver/v3 v3.1.1/go.mod h1:VPu/7SZ7ePZ3QOrcuXROw5FAcLl4a0cBrbBpGY/8hQs=
 github.com/antihax/optional v1.0.0/go.mod h1:uupD/76wgC+ih3iEmQUL+0Ugr19nfwCT1kdvxnR2qWY=

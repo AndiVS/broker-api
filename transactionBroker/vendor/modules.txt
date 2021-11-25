@@ -1,5 +1,6 @@
-# github.com/AndiVS/broker-api/priceBuffer v0.0.0-20211123152350-4ecea9f178e6
+# github.com/AndiVS/broker-api/priceBuffer v0.0.0-20211125123255-50a645cfda81
 ## explicit; go 1.17
+github.com/AndiVS/broker-api/priceBuffer/model
 github.com/AndiVS/broker-api/priceBuffer/protocolPrice
 # github.com/caarlos0/env/v6 v6.7.2
 ## explicit; go 1.17
