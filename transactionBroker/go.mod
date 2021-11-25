@@ -3,7 +3,7 @@ module github.com/AndiVS/broker-api/transactionBroker
 go 1.17
 
 require (
-	github.com/AndiVS/broker-api/priceBuffer v0.0.0-20211123152350-4ecea9f178e6
+	github.com/AndiVS/broker-api/priceBuffer v0.0.0-20211125123255-50a645cfda81
 	github.com/caarlos0/env/v6 v6.7.2
 	github.com/google/uuid v1.3.0
 	github.com/jackc/pgx/v4 v4.13.0

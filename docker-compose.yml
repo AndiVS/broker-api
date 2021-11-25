@@ -28,6 +28,28 @@ services:
     networks:
       node_net:
         ipv4_address: 172.28.1.9
+  transaction_broker1:
+    image: transaction_broker
+    environment:
+      - GRPC_BROKER_PORT=:8087
+    deploy:
+      restart_policy:
+        condition: on-failure
+        max_attempts: 3
+    networks:
+      node_net:
+        ipv4_address: 172.28.1.8
+  transaction_broker2:
+    image: transaction_broker
+    environment:
+      - GRPC_BROKER_PORT=:8082
+    deploy:
+      restart_policy:
+        condition: on-failure
+        max_attempts: 3
+    networks:
+      node_net:
+        ipv4_address: 172.28.1.8
   flyway:
     image: flyway/flyway:6.3.1
     command: -configFiles=/flyway/conf/flyway.config -locations=filesystem:/flyway/sql -connectRetries=60 migrate

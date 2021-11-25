@@ -3,7 +3,7 @@ package serverBroker
 
 import (
 	"context"
-	"github.com/AndiVS/broker-api/priceBuffer/protocolPrice"
+	"github.com/AndiVS/broker-api/priceBuffer/model"
 	"github.com/AndiVS/broker-api/transactionBroker/internal/service"
 	"github.com/AndiVS/broker-api/transactionBroker/protocolBroker"
 	"sync"
@@ -13,12 +13,12 @@ import (
 type TransactionServer struct {
 	Service     service.Transactions
 	mu          *sync.Mutex
-	currencyMap map[string]protocolPrice.Currency
+	currencyMap map[string]model.Currency
 	*protocolBroker.UnimplementedTransactionServiceServer
 }
 
 // NewTransactionServer constructor
-func NewTransactionServer(Service service.Transactions, mu *sync.Mutex, currencyMap map[string]protocolPrice.Currency) *TransactionServer {
+func NewTransactionServer(Service service.Transactions, mu *sync.Mutex, currencyMap map[string]model.Currency) *TransactionServer {
 	return &TransactionServer{Service: Service, mu: mu, currencyMap: currencyMap}
 }
 

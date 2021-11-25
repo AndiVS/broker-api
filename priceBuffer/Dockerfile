@@ -12,6 +12,8 @@ RUN go mod download
 COPY main.go /
 COPY /internal /internal
 COPY /protocolPrice /protocolPrice
+COPY /model /model
+
 
 RUN go build -tags musl ./..
 

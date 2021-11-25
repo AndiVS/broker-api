@@ -43,8 +43,8 @@ func generatePrice(currMap map[string]interface{}) {
 		rand.Seed(time.Now().UTC().UnixNano())
 		a := rand.Float32() * 0.01
 		b := float32(rand.Intn(3) - 1)
-		v.(*protocolPrice.Currency).CurrencyPrice *= a*b + 1
-		v.(*protocolPrice.Currency).Time = time.Now().Format(timeFormat)
+		v.(*model.Currency).CurrencyPrice *= a*b + 1
+		v.(*model.Currency).Time = time.Now().Format(timeFormat)
 	}
 }
 
@@ -52,12 +52,12 @@ func generateCurrencyMap() map[string]interface{} {
 	//currMap := make(map[string]*protocolPrice.Currency)
 	currMap := make(map[string]interface{})
 
-	currMap["BTC"] = &protocolPrice.Currency{
+	currMap["BTC"] = &model.Currency{
 		CurrencyName:  "BTC",
 		CurrencyPrice: 56000.555,
 		Time:          time.Now().Format(timeFormat),
 	}
-	currMap["ETH"] = &protocolPrice.Currency{
+	currMap["ETH"] = &model.Currency{
 		CurrencyName:  "ETH",
 		CurrencyPrice: 4300.555,
 		Time:          time.Now().Format(timeFormat),

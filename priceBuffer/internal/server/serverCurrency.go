@@ -2,6 +2,7 @@
 package server
 
 import (
+	"github.com/AndiVS/broker-api/priceBuffer/model"
 	"github.com/AndiVS/broker-api/priceBuffer/protocolPrice"
 	"sync"
 	"time"
@@ -10,13 +11,12 @@ import (
 // GRCPServer for grpc
 type GRCPServer struct {
 	protocolPrice.UnimplementedCurrencyServiceServer
-
 	mu          *sync.Mutex // protects currencyMap
-	currencyMap map[string]protocolPrice.Currency
+	currencyMap map[string]model.Currency
 }
 
 // NewCurrencyServer create object GRCPServer
-func NewCurrencyServer(mu *sync.Mutex, currencyMap map[string]protocolPrice.Currency) *GRCPServer {
+func NewCurrencyServer(mu *sync.Mutex, currencyMap map[string]model.Currency) *GRCPServer {
 	return &GRCPServer{mu: mu, currencyMap: currencyMap}
 }
 
@@ -28,7 +28,8 @@ func (s *GRCPServer) GetPrice(request *protocolPrice.GetPriceRequest, stream pro
 		s.mu.Lock()
 		resp := s.currencyMap[key]
 		s.mu.Unlock()
-		err := stream.Send(&protocolPrice.GetPriceResponse{Currency: &resp})
+		cur := protocolPrice.Currency{CurrencyName: resp.CurrencyName, CurrencyPrice: resp.CurrencyPrice, Time: resp.Time}
+		err := stream.Send(&protocolPrice.GetPriceResponse{Currency: &cur})
 		if err != nil {
 			return err
 		}
