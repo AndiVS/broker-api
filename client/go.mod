@@ -3,7 +3,7 @@ module github.com/AndiVS/broker-api/client
 go 1.17
 
 require (
-	github.com/AndiVS/broker-api/priceBuffer v0.0.0-20211123152350-4ecea9f178e6
+	github.com/AndiVS/broker-api/priceBuffer v0.0.0-20211125123255-50a645cfda81
 	github.com/AndiVS/broker-api/transactionBroker v0.0.0-20211122124540-90d5ae855b55
 	google.golang.org/grpc v1.42.0
 )

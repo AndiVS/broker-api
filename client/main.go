@@ -48,6 +48,7 @@ func buyCurrency(client protocolBroker.TransactionServiceClient, currency string
 }
 
 func getPrices(CurrencyName string, client protocolPrice.CurrencyServiceClient) {
+
 	req := protocolPrice.GetPriceRequest{Name: CurrencyName}
 	stream, err := client.GetPrice(context.Background(), &req)
 	if err != nil {
