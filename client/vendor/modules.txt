@@ -1,35 +1,35 @@
 # github.com/AndiVS/broker-api/priceBuffer v0.0.0-20211125123255-50a645cfda81
 ## explicit; go 1.17
 github.com/AndiVS/broker-api/priceBuffer/protocolPrice
-# github.com/AndiVS/broker-api/transactionBroker v0.0.0-20211122124540-90d5ae855b55
+# github.com/AndiVS/broker-api/transactionBroker v0.0.0-20211125150920-2fbb2cd7e7b3
 ## explicit; go 1.17
 github.com/AndiVS/broker-api/transactionBroker/protocolBroker
-# github.com/golang/protobuf v1.5.0
+# github.com/golang/protobuf v1.5.2
 ## explicit; go 1.9
 github.com/golang/protobuf/proto
 github.com/golang/protobuf/ptypes
 github.com/golang/protobuf/ptypes/any
 github.com/golang/protobuf/ptypes/duration
 github.com/golang/protobuf/ptypes/timestamp
-# golang.org/x/net v0.0.0-20210226172049-e18ecbb05110
-## explicit; go 1.11
+# golang.org/x/net v0.0.0-20211123203042-d83791d6bcd9
+## explicit; go 1.17
 golang.org/x/net/http/httpguts
 golang.org/x/net/http2
 golang.org/x/net/http2/hpack
 golang.org/x/net/idna
 golang.org/x/net/internal/timeseries
 golang.org/x/net/trace
-# golang.org/x/sys v0.0.0-20210615035016-665e8c7367d1
+# golang.org/x/sys v0.0.0-20211124211545-fe61309f8881
 ## explicit; go 1.17
 golang.org/x/sys/internal/unsafeheader
 golang.org/x/sys/unix
-# golang.org/x/text v0.3.6
-## explicit; go 1.11
+# golang.org/x/text v0.3.7
+## explicit; go 1.17
 golang.org/x/text/secure/bidirule
 golang.org/x/text/transform
 golang.org/x/text/unicode/bidi
 golang.org/x/text/unicode/norm
-# google.golang.org/genproto v0.0.0-20200526211855-cb27e3aa2013
+# google.golang.org/genproto v0.0.0-20211118181313-81c1377c94b1
 ## explicit; go 1.11
 google.golang.org/genproto/googleapis/rpc/status
 # google.golang.org/grpc v1.42.0
