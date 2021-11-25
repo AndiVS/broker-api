@@ -2,6 +2,8 @@ cloud.google.com/go v0.26.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMT
 cloud.google.com/go v0.34.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
 github.com/AndiVS/broker-api/priceBuffer v0.0.0-20211122144903-894fa67f9a06 h1:kPaXPZgGZ9hwdHc5rXIeV/WLw0aJA6H++I9s1aKbqws=
 github.com/AndiVS/broker-api/priceBuffer v0.0.0-20211122144903-894fa67f9a06/go.mod h1:XmYO/iEnS6hMU89eGuBMhOpUDb+ulC0f1NqgpUuph5g=
+github.com/AndiVS/broker-api/priceBuffer v0.0.0-20211123152350-4ecea9f178e6 h1:okFMaUqk+6AdcReG+o4cw+E1/C5YIW9/HSvwCVUSSaU=
+github.com/AndiVS/broker-api/priceBuffer v0.0.0-20211123152350-4ecea9f178e6/go.mod h1:XmYO/iEnS6hMU89eGuBMhOpUDb+ulC0f1NqgpUuph5g=
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
 github.com/antihax/optional v1.0.0/go.mod h1:uupD/76wgC+ih3iEmQUL+0Ugr19nfwCT1kdvxnR2qWY=
 github.com/census-instrumentation/opencensus-proto v0.2.1/go.mod h1:f6KPmirojxKA12rnyqOA5BBL4O983OfeGPqjHWSTneU=

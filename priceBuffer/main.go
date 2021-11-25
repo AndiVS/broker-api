@@ -17,7 +17,6 @@ func main() {
 	mute := new(sync.Mutex)
 	go conToGrpc(mute, currencyMap)
 	conToRedis(mute, currencyMap)
-
 }
 
 func conToRedis(mu *sync.Mutex, currencyMap map[string]protocolPrice.Currency) {

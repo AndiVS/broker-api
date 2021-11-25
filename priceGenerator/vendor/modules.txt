@@ -1,4 +1,4 @@
-# github.com/AndiVS/broker-api/priceBuffer v0.0.0-20211122144903-894fa67f9a06
+# github.com/AndiVS/broker-api/priceBuffer v0.0.0-20211123152350-4ecea9f178e6
 ## explicit; go 1.17
 github.com/AndiVS/broker-api/priceBuffer/protocolPrice
 # github.com/fsnotify/fsnotify v1.4.9

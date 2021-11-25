@@ -4,6 +4,8 @@ github.com/AndiVS/broker-api/priceBuffer v0.0.0-20211122103317-499e1514be38 h1:x
 github.com/AndiVS/broker-api/priceBuffer v0.0.0-20211122103317-499e1514be38/go.mod h1:XmYO/iEnS6hMU89eGuBMhOpUDb+ulC0f1NqgpUuph5g=
 github.com/AndiVS/broker-api/priceBuffer v0.0.0-20211122144903-894fa67f9a06 h1:kPaXPZgGZ9hwdHc5rXIeV/WLw0aJA6H++I9s1aKbqws=
 github.com/AndiVS/broker-api/priceBuffer v0.0.0-20211122144903-894fa67f9a06/go.mod h1:XmYO/iEnS6hMU89eGuBMhOpUDb+ulC0f1NqgpUuph5g=
+github.com/AndiVS/broker-api/priceBuffer v0.0.0-20211123152350-4ecea9f178e6 h1:okFMaUqk+6AdcReG+o4cw+E1/C5YIW9/HSvwCVUSSaU=
+github.com/AndiVS/broker-api/priceBuffer v0.0.0-20211123152350-4ecea9f178e6/go.mod h1:XmYO/iEnS6hMU89eGuBMhOpUDb+ulC0f1NqgpUuph5g=
 github.com/AndiVS/broker-api/transactionBroker v0.0.0-20211122124540-90d5ae855b55 h1:yn1ORTUM2SdpY18MrnLflvhv+MoxUY4cNeW1g/501vM=
 github.com/AndiVS/broker-api/transactionBroker v0.0.0-20211122124540-90d5ae855b55/go.mod h1:pXeYfOUwA5Xmeypqo0ixMbMUfbGg7AroR0kbmoKv16E=
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=

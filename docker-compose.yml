@@ -28,6 +28,38 @@ services:
     networks:
       node_net:
         ipv4_address: 172.28.1.9
+  flyway:
+    image: flyway/flyway:6.3.1
+    command: -configFiles=/flyway/conf/flyway.config -locations=filesystem:/flyway/sql -connectRetries=60 migrate
+    volumes:
+      - ./transactionBroker/internal/migrations:/flyway/sql
+      - ./transactionBroker/docker-flyway.config:/flyway/conf/flyway.config
+    depends_on:
+      - postgres
+    networks:
+      node_net:
+  postgres:
+    container_name: broker_api
+    image: postgres:13.3
+    environment:
+      POSTGRES_DB: "transactionDB"
+      POSTGRES_USER: "andeisaldyun"
+      POSTGRES_PASSWORD: "e3cr3t"
+      FLYWAY_URL:
+    volumes:
+      - /home/andeisaldyun/DBdata/dbPostgr:/data/db
+    ports:
+      - "5432:5432"
+    networks:
+      node_net:
+        ipv4_address: 172.28.1.2
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U andeisaldyun -d transactionDB" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    restart: always
   redis:
     image: "redis:alpine"
     ports:

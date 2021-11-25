@@ -8,7 +8,7 @@ import (
 
 // Config struct to config env
 type Config struct {
-	Port          string `env:"PORT" envDefault:":8081" json:"port,omitempty"`
+	Port          string `env:"PORT" envDefault:":8080" json:"port,omitempty"`
 	LogLevel      string `env:"LOGLEVEL" envDefault:"debug" json:"loglevel,omitempty"`
 	DBURLPOSTGRES string `env:"DBURLPOSTGRES" envDefault:"postgres://andeisaldyun:e3cr3t@postgres:5432/catsDB" json:"dburlpostgres,omitempty"`
 	DBURL         string `env:"DBURL" envDefault:"" json:"dburl,omitempty"`
@@ -19,9 +19,9 @@ type Config struct {
 	System     string `env:"SYSTEM" envDefault:"postgres"`
 	DBUser     string `env:"DB_USER" envDefault:"andeisaldyun"`
 	DBPassword string `env:"DB_PASSWORD" envDefault:"e3cr3t"`
-	DBHost     string `env:"DB_HOST" envDefault:"localhost"`
+	DBHost     string `env:"DB_HOST" envDefault:"172.28.1.2"`
 	DBPort     int    `env:"DB_PORT" envDefault:"5432"`
-	DBName     string `env:"DB_NAME" envDefault:"catsDB"`
+	DBName     string `env:"DB_NAME" envDefault:"transactionDB"`
 
 	HashSalt                    string `env:"HASHSALT" envDefault:"HAsh_salt" json:"hash_salt,omitempty"`
 	AuthenticationKey           string `env:"AUTHENTICATIONKEY" envDefault:"authentication_key" json:"authentication_key,omitempty"`
