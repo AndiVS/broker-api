@@ -3,28 +3,29 @@ package service
 
 import (
 	"context"
-	"github.com/AndiVS/broker-api/priceBuffer/protocolPrice"
 	"github.com/AndiVS/broker-api/transactionBroker/internal/model"
 	"github.com/AndiVS/broker-api/transactionBroker/internal/repository"
 	"github.com/google/uuid"
 )
 
+// Transactions interface for transactionService
 type Transactions interface {
-	BuyCurrency(c context.Context, name *string, amount *int64) (*uuid.UUID, error)
+	BuyCurrency(c context.Context, name, time string, amount int64, price float32) (*uuid.UUID, error)
 }
 
+// TransactionService struct for service
 type TransactionService struct {
-	Rep         repository.Transactions
-	CurrencyMap map[string]*protocolPrice.Currency
+	Rep repository.Transactions
 }
 
-func NewTransactionService(Rep interface{}, currencyMap map[string]*protocolPrice.Currency) Transactions {
-	return &TransactionService{Rep: Rep.(*repository.Postgres), CurrencyMap: currencyMap}
+// NewTransactionService constructor
+func NewTransactionService(Rep interface{}) Transactions {
+	return &TransactionService{Rep: Rep.(*repository.Postgres)}
 }
 
 // BuyCurrency add record about transaction
-func (s *TransactionService) BuyCurrency(c context.Context, name *string, amount *int64) (*uuid.UUID, error) {
-	transaction := model.Transaction{TransactionID: uuid.New(), CurrencyName: *name, Amount: *amount,
-		Price: s.CurrencyMap[*name].CurrencyPrice, Time: s.CurrencyMap[*name].Time}
+func (s *TransactionService) BuyCurrency(c context.Context, name, time string, amount int64, price float32) (*uuid.UUID, error) {
+	transaction := model.Transaction{TransactionID: uuid.New(), CurrencyName: name, Amount: amount,
+		Price: price, TransactionTime: time}
 	return s.Rep.InsertTransaction(c, &transaction)
 }

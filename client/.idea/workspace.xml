@@ -5,40 +5,26 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="70bb0b2f-3a8a-421a-b22b-70e15185ad44" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/vendor/github.com/AndiVS/broker-api/priceBuffer/protocolPrice/serverPrice.pb.go" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/github.com/AndiVS/broker-api/priceBuffer/protocolPrice/serverPrice.pb.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/vendor/github.com/AndiVS/broker-api/priceBuffer/protocolPrice/serverPrice.proto" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/github.com/AndiVS/broker-api/priceBuffer/protocolPrice/serverPrice.proto" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vendor/github.com/AndiVS/broker-api/priceBuffer/protocolPrice/serverPrice_grpc.pb.go" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/github.com/AndiVS/broker-api/priceBuffer/protocolPrice/serverPrice_grpc.pb.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/vendor/modules.txt" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/modules.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../priceBuffer/internal/consumer/redisConsumer.go" beforeDir="false" afterPath="$PROJECT_DIR$/../priceBuffer/internal/consumer/redisConsumer.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../priceBuffer/internal/server/serverCurrency.go" beforeDir="false" afterPath="$PROJECT_DIR$/../priceBuffer/internal/server/serverCurrency.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../priceBuffer/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/../priceBuffer/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../priceBuffer/protocolPrice/serverPrice.pb.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../priceBuffer/protocolPrice/serverPrice_grpc.pb.go" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/../priceGenerator/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/../priceGenerator/go.mod" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../priceGenerator/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/../priceGenerator/go.sum" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../priceGenerator/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/../priceGenerator/main.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../priceGenerator/vendor/github.com/AndiVS/broker-api/priceBuffer/protocolPrice/serverPrice.pb.go" beforeDir="false" afterPath="$PROJECT_DIR$/../priceGenerator/vendor/github.com/AndiVS/broker-api/priceBuffer/protocolPrice/serverPrice.pb.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../priceGenerator/vendor/github.com/AndiVS/broker-api/priceBuffer/protocolPrice/serverPrice.proto" beforeDir="false" afterPath="$PROJECT_DIR$/../priceGenerator/vendor/github.com/AndiVS/broker-api/priceBuffer/protocolPrice/serverPrice.proto" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../priceGenerator/vendor/github.com/google/uuid/.travis.yml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../priceGenerator/vendor/github.com/google/uuid/CONTRIBUTING.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../priceGenerator/vendor/github.com/google/uuid/CONTRIBUTORS" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../priceGenerator/vendor/github.com/google/uuid/LICENSE" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../priceGenerator/vendor/github.com/google/uuid/README.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../priceGenerator/vendor/github.com/google/uuid/dce.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../priceGenerator/vendor/github.com/google/uuid/doc.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../priceGenerator/vendor/github.com/google/uuid/hash.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../priceGenerator/vendor/github.com/google/uuid/marshal.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../priceGenerator/vendor/github.com/google/uuid/node.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../priceGenerator/vendor/github.com/google/uuid/node_js.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../priceGenerator/vendor/github.com/google/uuid/node_net.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../priceGenerator/vendor/github.com/google/uuid/null.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../priceGenerator/vendor/github.com/google/uuid/sql.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../priceGenerator/vendor/github.com/google/uuid/time.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../priceGenerator/vendor/github.com/google/uuid/util.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../priceGenerator/vendor/github.com/google/uuid/uuid.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../priceGenerator/vendor/github.com/google/uuid/version1.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../priceGenerator/vendor/github.com/google/uuid/version4.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../priceGenerator/vendor/github.com/AndiVS/broker-api/priceBuffer/protocolPrice/serverPrice_grpc.pb.go" beforeDir="false" afterPath="$PROJECT_DIR$/../priceGenerator/vendor/github.com/AndiVS/broker-api/priceBuffer/protocolPrice/serverPrice_grpc.pb.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../priceGenerator/vendor/modules.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../priceGenerator/vendor/modules.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../transactionBroker/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/../transactionBroker/main.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -66,11 +52,21 @@
     <property name="go.import.settings.migrated" value="true" />
     <property name="go.modules.go.list.on.any.changes.was.set" value="true" />
     <property name="go.sdk.automatically.set" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/.." />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.tslint" value="true" />
     <property name="node.js.selected.package.eslint" value="(autodetect)" />
     <property name="node.js.selected.package.tslint" value="(autodetect)" />
+  </component>
+  <component name="RunManager">
+    <configuration default="true" type="GoApplicationRunConfiguration" factoryName="Go Application">
+      <module name="client" />
+      <working_directory value="$PROJECT_DIR$" />
+      <kind value="FILE" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$" />
+      <method v="2" />
+    </configuration>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TypeScriptGeneratedFilesManager">

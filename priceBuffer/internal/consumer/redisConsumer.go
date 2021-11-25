@@ -1,3 +1,4 @@
+// Package consumer package for all consumers
 package consumer
 
 import (
@@ -14,10 +15,12 @@ type RedisStream struct {
 	currencyMap map[string]protocolPrice.Currency
 }
 
+// NewRedisStream create redis stream object
 func NewRedisStream(client *redis.Client, mu *sync.Mutex, currencyMap map[string]protocolPrice.Currency) *RedisStream {
 	return &RedisStream{client: client, mu: mu, currencyMap: currencyMap}
 }
 
+// RedisConsumer consume messages from redis
 func (s *RedisStream) RedisConsumer() {
 	for {
 		streams, err := s.client.XRead(&redis.XReadArgs{
@@ -31,15 +34,16 @@ func (s *RedisStream) RedisConsumer() {
 		stream := streams[0].Messages[0]
 
 		cur := new(protocolPrice.Currency)
+		for _, v := range stream.Values {
+			err = cur.UnmarshalBinary([]byte(v.(string)))
+			if err != nil {
+				log.Printf("err %v ", err)
+			}
 
-		err = cur.UnmarshalBinary([]byte(stream.Values["Currency"].(string)))
-		if err != nil {
-			log.Printf("err %v ", err)
+			s.mu.Lock()
+			s.currencyMap[cur.CurrencyName] = *cur
+			s.mu.Unlock()
+			log.Printf("Get new data CurrencyName: %v, CurrencyPrice: %v, Time: %v", cur.CurrencyName, cur.CurrencyPrice, cur.Time)
 		}
-
-		s.mu.Lock()
-		s.currencyMap[cur.CurrencyName] = *cur
-		s.mu.Unlock()
-		log.Printf("Get new data CurrencyName: %v, CurrencyPrice: %v, Time: %v", cur.CurrencyName, cur.CurrencyPrice, cur.Time)
 	}
 }

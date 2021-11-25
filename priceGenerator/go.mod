@@ -3,7 +3,7 @@ module github.com/AndiVS/broker-api/priceGenerator
 go 1.17
 
 require (
-	github.com/AndiVS/broker-api/priceBuffer v0.0.0-20211122144903-894fa67f9a06
+	github.com/AndiVS/broker-api/priceBuffer v0.0.0-20211123152350-4ecea9f178e6
 	github.com/go-redis/redis/v7 v7.4.1
 	github.com/sirupsen/logrus v1.8.1
 

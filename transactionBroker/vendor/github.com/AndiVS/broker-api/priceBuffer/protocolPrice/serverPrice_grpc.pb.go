@@ -18,7 +18,7 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type CurrencyServiceClient interface {
-	GetPrice(ctx context.Context, opts ...grpc.CallOption) (CurrencyService_GetPriceClient, error)
+	GetPrice(ctx context.Context, in *GetPriceRequest, opts ...grpc.CallOption) (CurrencyService_GetPriceClient, error)
 }
 
 type currencyServiceClient struct {
@@ -29,27 +29,28 @@ func NewCurrencyServiceClient(cc grpc.ClientConnInterface) CurrencyServiceClient
 	return &currencyServiceClient{cc}
 }
 
-func (c *currencyServiceClient) GetPrice(ctx context.Context, opts ...grpc.CallOption) (CurrencyService_GetPriceClient, error) {
+func (c *currencyServiceClient) GetPrice(ctx context.Context, in *GetPriceRequest, opts ...grpc.CallOption) (CurrencyService_GetPriceClient, error) {
 	stream, err := c.cc.NewStream(ctx, &CurrencyService_ServiceDesc.Streams[0], "/protocolPrice.CurrencyService/GetPrice", opts...)
 	if err != nil {
 		return nil, err
 	}
 	x := &currencyServiceGetPriceClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
 	return x, nil
 }
 
 type CurrencyService_GetPriceClient interface {
-	Send(*GetPriceRequest) error
 	Recv() (*GetPriceResponse, error)
 	grpc.ClientStream
 }
 
 type currencyServiceGetPriceClient struct {
 	grpc.ClientStream
-}
-
-func (x *currencyServiceGetPriceClient) Send(m *GetPriceRequest) error {
-	return x.ClientStream.SendMsg(m)
 }
 
 func (x *currencyServiceGetPriceClient) Recv() (*GetPriceResponse, error) {
@@ -64,7 +65,7 @@ func (x *currencyServiceGetPriceClient) Recv() (*GetPriceResponse, error) {
 // All implementations must embed UnimplementedCurrencyServiceServer
 // for forward compatibility
 type CurrencyServiceServer interface {
-	GetPrice(CurrencyService_GetPriceServer) error
+	GetPrice(*GetPriceRequest, CurrencyService_GetPriceServer) error
 	mustEmbedUnimplementedCurrencyServiceServer()
 }
 
@@ -72,7 +73,7 @@ type CurrencyServiceServer interface {
 type UnimplementedCurrencyServiceServer struct {
 }
 
-func (UnimplementedCurrencyServiceServer) GetPrice(CurrencyService_GetPriceServer) error {
+func (UnimplementedCurrencyServiceServer) GetPrice(*GetPriceRequest, CurrencyService_GetPriceServer) error {
 	return status.Errorf(codes.Unimplemented, "method GetPrice not implemented")
 }
 func (UnimplementedCurrencyServiceServer) mustEmbedUnimplementedCurrencyServiceServer() {}
@@ -89,12 +90,15 @@ func RegisterCurrencyServiceServer(s grpc.ServiceRegistrar, srv CurrencyServiceS
 }
 
 func _CurrencyService_GetPrice_Handler(srv interface{}, stream grpc.ServerStream) error {
-	return srv.(CurrencyServiceServer).GetPrice(&currencyServiceGetPriceServer{stream})
+	m := new(GetPriceRequest)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(CurrencyServiceServer).GetPrice(m, &currencyServiceGetPriceServer{stream})
 }
 
 type CurrencyService_GetPriceServer interface {
 	Send(*GetPriceResponse) error
-	Recv() (*GetPriceRequest, error)
 	grpc.ServerStream
 }
 
@@ -104,14 +108,6 @@ type currencyServiceGetPriceServer struct {
 
 func (x *currencyServiceGetPriceServer) Send(m *GetPriceResponse) error {
 	return x.ServerStream.SendMsg(m)
-}
-
-func (x *currencyServiceGetPriceServer) Recv() (*GetPriceRequest, error) {
-	m := new(GetPriceRequest)
-	if err := x.ServerStream.RecvMsg(m); err != nil {
-		return nil, err
-	}
-	return m, nil
 }
 
 // CurrencyService_ServiceDesc is the grpc.ServiceDesc for CurrencyService service.
@@ -126,7 +122,6 @@ var CurrencyService_ServiceDesc = grpc.ServiceDesc{
 			StreamName:    "GetPrice",
 			Handler:       _CurrencyService_GetPrice_Handler,
 			ServerStreams: true,
-			ClientStreams: true,
 		},
 	},
 	Metadata: "protocolPrice/serverPrice.proto",

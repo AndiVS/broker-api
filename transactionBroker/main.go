@@ -14,8 +14,7 @@ import (
 	"google.golang.org/grpc"
 	"io"
 	"net"
-	"os"
-	"time"
+	"sync"
 )
 
 func main() {
@@ -35,25 +34,30 @@ func main() {
 
 	pool := getPostgres(cfg.DBURL)
 
+	go listen(pool)
+
 	recordRepository := repository.NewRepository(pool)
 
 	log.Infof("Connected!")
 
 	log.Infof("Starting HTTP server at %s...", cfg.Port)
 
-	currencyMap := new(map[string]*protocolPrice.Currency)
+	currencyMap := map[string]protocolPrice.Currency{}
+	mute := new(sync.Mutex)
+	connectionBuffer := connectToBuffer()
+	go getPrices("BTC", connectionBuffer, mute, currencyMap)
 
-	transactionService := service.NewTransactionService(recordRepository, *currencyMap)
-	transactionServer := serverBroker.NewTransactionServer(transactionService)
+	transactionService := service.NewTransactionService(recordRepository)
+	transactionServer := serverBroker.NewTransactionServer(transactionService, mute, currencyMap)
 
 	err = runGRPCServer(transactionServer, &cfg)
 	if err != nil {
 		log.Printf("err in grpc run %v", err)
 	}
 
-	connectionBuffer := connectToBuffer()
+	/*connectionBuffer := connectToBuffer()
 	getPrices(connectionBuffer)
-
+	*/
 }
 
 func setLog() {
@@ -64,8 +68,7 @@ func setLog() {
 }
 
 func getURL(cfg *config.Config) (URL string) {
-	var str string
-	str = fmt.Sprintf("%s://%s:%s@%s:%d/%s",
+	str := fmt.Sprintf("%s://%s:%s@%s:%d/%s",
 		cfg.System,
 		cfg.DBUser,
 		cfg.DBPassword,
@@ -78,10 +81,33 @@ func getURL(cfg *config.Config) (URL string) {
 
 func getPostgres(url string) *pgxpool.Pool {
 	pool, err := pgxpool.Connect(context.Background(), url)
+
 	if err != nil {
 		log.Fatalf("Unable to connection to database: %v", err)
 	}
 	return pool
+}
+
+func listen(pool *pgxpool.Pool) {
+	conn, err := pool.Acquire(context.Background())
+	if err != nil {
+		log.Println("Error acquiring connection:", err)
+	}
+	defer conn.Release()
+
+	_, err = conn.Exec(context.Background(), "listen transactions")
+	if err != nil {
+		log.Println("Error listening to transactions channel:", err)
+	}
+
+	for {
+		notification, err := conn.Conn().WaitForNotification(context.Background())
+		if err != nil {
+			log.Println("Error waiting for notification:", err)
+		}
+
+		log.Println("PID:", notification.PID, "Channel:", notification.Channel, "Payload:", notification.Payload)
+	}
 }
 
 func runGRPCServer(recServer protocolBroker.TransactionServiceServer, cfg *config.Config) error {
@@ -101,7 +127,8 @@ func runGRPCServer(recServer protocolBroker.TransactionServiceServer, cfg *confi
 }
 
 func connectToBuffer() protocolPrice.CurrencyServiceClient {
-	addressGrcp := os.Getenv("GRPC_BUFFER_ADDRESS")
+	//addressGrcp := os.Getenv("GRPC_BUFFER_ADDRESS")
+	addressGrcp := "172.28.1.9:8081"
 	con, err := grpc.Dial(addressGrcp, grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
 		log.Fatal("cannot dial server: ", err)
@@ -110,43 +137,26 @@ func connectToBuffer() protocolPrice.CurrencyServiceClient {
 	return protocolPrice.NewCurrencyServiceClient(con)
 }
 
-func getPrices(client protocolPrice.CurrencyServiceClient) {
-	notes := []*protocolPrice.GetPriceRequest{
-		{Name: "BTC"},
-	}
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-	stream, err := client.GetPrice(ctx)
+func getPrices(CurrencyName string, client protocolPrice.CurrencyServiceClient, mu *sync.Mutex, currencyMap map[string]protocolPrice.Currency) {
+	req := protocolPrice.GetPriceRequest{Name: CurrencyName}
+	stream, err := client.GetPrice(context.Background(), &req)
 	if err != nil {
 		log.Fatalf("%v.RouteChat(_) = _, %v", client, err)
 	}
-	waitc := make(chan struct{})
-	go func() {
-		for {
-			in, err := stream.Recv()
-			if err == io.EOF {
-				// read done.
-				close(waitc)
-				return
-			}
-			if err != nil {
-				log.Fatalf("Failed to receive a note : %v", err)
-			}
-
-			curr := protocolPrice.Currency{
-				CurrencyName: in.Currency.CurrencyName, CurrencyPrice: in.Currency.CurrencyPrice, Time: in.Currency.Time}
-
-			currencyMap[in.Currency.CurrencyName] = &curr
-
-			log.Printf("Got currency name: %v price: %v at time %v",
-				in.Currency.CurrencyName, in.Currency.CurrencyPrice, in.Currency.Time)
+	for {
+		in, err := stream.Recv()
+		if err == io.EOF {
+			return
 		}
-	}()
-	/*	for _, note := range notes {
-		if err := stream.Send(note); err != nil {
-			log.Fatalf("Failed to send a note: %v", err)
+		if err != nil {
+			log.Fatalf("Failed to receive a note : %v", err)
 		}
-	}*/
-	stream.CloseSend()
-	<-waitc
+		name := in.Currency.CurrencyName
+		mu.Lock()
+		currencyMap[name] = *in.Currency
+		mu.Unlock()
+
+		log.Printf("Got currency data Name: %v Price: %v at time %v",
+			in.Currency.CurrencyName, in.Currency.CurrencyPrice, in.Currency.Time)
+	}
 }

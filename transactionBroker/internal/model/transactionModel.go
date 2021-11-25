@@ -5,10 +5,11 @@ import (
 	"github.com/google/uuid"
 )
 
+// Transaction model of transaction
 type Transaction struct {
-	TransactionID uuid.UUID `param:"tid" query:"tid" header:"tid" form:"tid" bson:"tid" msg:"tid"`
-	CurrencyName  string    `param:"cname" query:"cname" header:"cname" form:"cname" bson:"cname" msg:"cname"`
-	Amount        int64     `param:"amount" query:"amount" header:"amount" form:"amount" bson:"amount" msg:"amount"`
-	Price         float32   `param:"price" query:"price" header:"price" form:"price" bson:"price" msg:"price"`
-	Time          string    `param:"time" query:"time" header:"time" form:"time" bson:"time" msg:"time"`
+	TransactionID   uuid.UUID `param:"transaction_id" query:"transaction_id" header:"transaction_id" form:"transaction_id" bson:"transaction_id" msg:"transaction_id" json:"transaction_id"`
+	CurrencyName    string    `param:"currency_name" query:"currency_name" header:"currency_name" form:"currency_name" bson:"currency_name" msg:"currency_name" json:"currency_name"`
+	Amount          int64     `param:"amount" query:"amount" header:"amount" form:"amount" bson:"amount" msg:"amount" json:"amount"`
+	Price           float32   `param:"price" query:"price" header:"price" form:"price" bson:"price" msg:"price" json:"price"`
+	TransactionTime string    `param:"transaction_time" query:"transaction_time" header:"transaction_time" form:"transaction_time" bson:"transaction_time" msg:"transaction_time" json:"transaction_time"`
 }

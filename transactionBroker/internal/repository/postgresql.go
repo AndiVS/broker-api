@@ -39,8 +39,8 @@ type Transactions interface {
 // InsertTransaction function for inserting item from a table
 func (repos *Postgres) InsertTransaction(c context.Context, transaction *model.Transaction) (*uuid.UUID, error) {
 	row := repos.Pool.QueryRow(c,
-		"INSERT INTO transactions (tid, cName, amount, price, time) VALUES ($1, $2, $3, $4, $5) RETURNING tid",
-		transaction.TransactionID, transaction.CurrencyName, transaction.Amount, transaction.Price, transaction.Time)
+		"INSERT INTO transactions (transaction_id, currency_name, amount, price, transaction_time) VALUES ($1, $2, $3, $4, $5) RETURNING transaction_id",
+		transaction.TransactionID, transaction.CurrencyName, transaction.Amount, transaction.Price, transaction.TransactionTime)
 
 	err := row.Scan(&transaction.TransactionID)
 	if err != nil {
@@ -55,9 +55,9 @@ func (repos *Postgres) InsertTransaction(c context.Context, transaction *model.T
 func (repos *Postgres) SelectTransaction(c context.Context, id *uuid.UUID) (*model.Transaction, error) {
 	var transaction model.Transaction
 	row := repos.Pool.QueryRow(c,
-		"SELECT tid, cName, amount, price, time FROM transactions WHERE tid = $1", id)
+		"SELECT transaction_id, currency_name, amount, price, transaction_time FROM transactions WHERE transaction_id = $1", id)
 
-	err := row.Scan(&transaction.TransactionID, &transaction.CurrencyName, &transaction.Amount, &transaction.Price, &transaction.Time)
+	err := row.Scan(&transaction.TransactionID, &transaction.CurrencyName, &transaction.Amount, &transaction.Price, &transaction.TransactionTime)
 	if errors.Is(err, pgx.ErrNoRows) {
 		log.Errorf("Not found : %s\n", err)
 		return &transaction, ErrNotFound
@@ -75,11 +75,11 @@ func (repos *Postgres) SelectAllTransactions(c context.Context) ([]*model.Transa
 	var transactions []*model.Transaction
 
 	row, err := repos.Pool.Query(c,
-		"SELECT tid, cName, amount, price, time FROM transactions")
+		"SELECT transaction_id, currency_name, amount, price, transaction_time FROM transactions")
 
 	for row.Next() {
 		var rc model.Transaction
-		err := row.Scan(&rc.TransactionID, &rc.CurrencyName, &rc.Amount, &rc.Price, &rc.Time)
+		err := row.Scan(&rc.TransactionID, &rc.CurrencyName, &rc.Amount, &rc.Price, &rc.TransactionTime)
 		if err == pgx.ErrNoRows {
 			return transactions, err
 		}
@@ -94,11 +94,11 @@ func (repos *Postgres) SelectAllTransactionWithCurrency(c context.Context, name 
 	var transactions []*model.Transaction
 
 	row, err := repos.Pool.Query(c,
-		"SELECT tid, cName, amount, price, time FROM transactions WHERE cName = $1", name)
+		"SELECT transaction_id, currency_name, amount, price, transaction_time FROM transactions WHERE currency_name = $1", name)
 
 	for row.Next() {
 		var rc model.Transaction
-		err := row.Scan(&rc.TransactionID, &rc.CurrencyName, &rc.Amount, &rc.Price, &rc.Time)
+		err := row.Scan(&rc.TransactionID, &rc.CurrencyName, &rc.Amount, &rc.Price, &rc.TransactionID)
 		if err == pgx.ErrNoRows {
 			return transactions, err
 		}
@@ -111,8 +111,8 @@ func (repos *Postgres) SelectAllTransactionWithCurrency(c context.Context, name 
 // UpdateTransaction function for updating item from a table
 func (repos *Postgres) UpdateTransaction(c context.Context, transaction *model.Transaction) error {
 	_, err := repos.Pool.Exec(c,
-		"UPDATE transactions SET cName = $2, amount = $3, price = $4, time = $5 WHERE tid = $1",
-		transaction.TransactionID, transaction.CurrencyName, transaction.Amount, transaction.Price, transaction.Time)
+		"UPDATE transactions SET currency_name = $2, amount = $3, price = $4, transaction_time = $5 WHERE transaction_id = $1",
+		transaction.TransactionID, transaction.CurrencyName, transaction.Amount, transaction.Price, transaction.TransactionID)
 
 	if err != nil {
 		log.Errorf("Failed updating data in db: %s\n", err)
@@ -124,7 +124,7 @@ func (repos *Postgres) UpdateTransaction(c context.Context, transaction *model.T
 
 // DeleteTransaction function for deleting item from a table
 func (repos *Postgres) DeleteTransaction(c context.Context, id *uuid.UUID) error {
-	_, err := repos.Pool.Exec(c, "DELETE FROM transactions WHERE tid = $1", id)
+	_, err := repos.Pool.Exec(c, "DELETE FROM transactions WHERE transaction_id = $1", id)
 
 	if err != nil {
 		return err
@@ -135,7 +135,7 @@ func (repos *Postgres) DeleteTransaction(c context.Context, id *uuid.UUID) error
 
 // DeleteALLTransactions function for deleting item from a table
 func (repos *Postgres) DeleteALLTransactions(c context.Context, name string) error {
-	_, err := repos.Pool.Exec(c, "DELETE FROM transactions WHERE cName = $1", name)
+	_, err := repos.Pool.Exec(c, "DELETE FROM transactions WHERE currency_name = $1", name)
 
 	if err != nil {
 		return err
