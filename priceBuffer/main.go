@@ -10,6 +10,7 @@ import (
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 	"net"
+	"os"
 	"sync"
 )
 
@@ -21,8 +22,8 @@ func main() {
 }
 
 func conToRedis(mu *sync.Mutex, currencyMap map[string]model.Currency) {
-	//adr := fmt.Sprintf("%s:%s", os.Getenv("REDIS_HOST"), os.Getenv("REDIS_PORT"))
-	adr := fmt.Sprintf("%s:%s", "172.28.1.1", "6379")
+	adr := fmt.Sprintf("%s%s", os.Getenv("REDIS_HOST"), os.Getenv("REDIS_PORT"))
+	//adr := fmt.Sprintf("%s:%s", "172.28.1.1", "6379")
 	client := redis.NewClient(&redis.Options{
 		Addr:     adr,
 		Password: "",
@@ -34,8 +35,8 @@ func conToRedis(mu *sync.Mutex, currencyMap map[string]model.Currency) {
 }
 
 func conToGrpc(mu *sync.Mutex, currencyMap map[string]model.Currency) {
-	//listener, err := net.Listen("tcp", os.Getenv("GRCP_PORT"))
-	listener, err := net.Listen("tcp", ":8081")
+	listener, err := net.Listen("tcp", os.Getenv("GRPC_BUFFER_PORT"))
+	//listener, err := net.Listen("tcp", ":8081")
 
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)

@@ -6,23 +6,14 @@ import (
 	"github.com/go-redis/redis/v7"
 	log "github.com/sirupsen/logrus"
 	"math/rand"
+	"os"
 	"time"
 )
 
 const timeFormat = "2006-01-02 15:04:05.000000000"
 
 func main() {
-	//adr := fmt.Sprintf("%s:%s", os.Getenv("REDIS_HOST"), os.Getenv("REDIS_PORT"))
-	adr := fmt.Sprintf("%s:%s", "172.28.1.1", "6379")
-	client := redis.NewClient(&redis.Options{
-		Addr:     adr,
-		Password: "",
-		DB:       0, // use default DB
-	})
-	_, err := client.Ping().Result()
-	if err != nil {
-		log.Printf("err in ping redis conn %v", err)
-	}
+	client := connectToRedis()
 	currMap := generateCurrencyMap()
 
 	for {
@@ -36,6 +27,21 @@ func main() {
 		time.Sleep(5 * time.Second)
 		generatePrice(currMap)
 	}
+}
+
+func connectToRedis() *redis.Client {
+	adr := fmt.Sprintf("%s%s", os.Getenv("REDIS_HOST"), os.Getenv("REDIS_PORT"))
+	//adr := fmt.Sprintf("%s:%s", "172.28.1.1", "6379")
+	client := redis.NewClient(&redis.Options{
+		Addr:     adr,
+		Password: "",
+		DB:       0, // use default DB
+	})
+	_, err := client.Ping().Result()
+	if err != nil {
+		log.Printf("err in ping redis conn %v", err)
+	}
+	return client
 }
 
 func generatePrice(currMap map[string]interface{}) {

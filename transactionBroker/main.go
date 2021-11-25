@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"github.com/AndiVS/broker-api/priceBuffer/model"
 	"github.com/AndiVS/broker-api/priceBuffer/protocolPrice"
 	"github.com/AndiVS/broker-api/transactionBroker/internal/config"
 	"github.com/AndiVS/broker-api/transactionBroker/internal/repository"
@@ -40,17 +41,17 @@ func main() {
 
 	log.Infof("Connected!")
 
-	log.Infof("Starting HTTP server at %s...", cfg.Port)
+	currencyMap := map[string]model.Currency{}
 
-	currencyMap := map[string]protocolPrice.Currency{}
 	mute := new(sync.Mutex)
 	connectionBuffer := connectToBuffer()
 	go getPrices("BTC", connectionBuffer, mute, currencyMap)
+	go getPrices("ETH", connectionBuffer, mute, currencyMap)
 
 	transactionService := service.NewTransactionService(recordRepository)
 	transactionServer := serverBroker.NewTransactionServer(transactionService, mute, currencyMap)
 
-	err = runGRPCServer(transactionServer, &cfg)
+	err = runGRPCServer(transactionServer)
 	if err != nil {
 		log.Printf("err in grpc run %v", err)
 	}
@@ -110,8 +111,10 @@ func listen(pool *pgxpool.Pool) {
 	}
 }
 
-func runGRPCServer(recServer protocolBroker.TransactionServiceServer, cfg *config.Config) error {
-	listener, err := net.Listen("tcp", cfg.Port)
+func runGRPCServer(recServer protocolBroker.TransactionServiceServer) error {
+	//port := os.Getenv("GRPC_BROKER_PORT")
+	port := ":8080"
+	listener, err := net.Listen("tcp", port)
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
@@ -127,7 +130,7 @@ func runGRPCServer(recServer protocolBroker.TransactionServiceServer, cfg *confi
 }
 
 func connectToBuffer() protocolPrice.CurrencyServiceClient {
-	//addressGrcp := os.Getenv("GRPC_BUFFER_ADDRESS")
+	//addressGrcp := fmt.Sprintf("%s%s", os.Getenv("GRPC_BUFFER_HOST"), os.Getenv("GRPC_BUFFER_PORT"))
 	addressGrcp := "172.28.1.9:8081"
 	con, err := grpc.Dial(addressGrcp, grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
@@ -137,7 +140,7 @@ func connectToBuffer() protocolPrice.CurrencyServiceClient {
 	return protocolPrice.NewCurrencyServiceClient(con)
 }
 
-func getPrices(CurrencyName string, client protocolPrice.CurrencyServiceClient, mu *sync.Mutex, currencyMap map[string]protocolPrice.Currency) {
+func getPrices(CurrencyName string, client protocolPrice.CurrencyServiceClient, mu *sync.Mutex, currencyMap map[string]model.Currency) {
 	req := protocolPrice.GetPriceRequest{Name: CurrencyName}
 	stream, err := client.GetPrice(context.Background(), &req)
 	if err != nil {
@@ -151,9 +154,10 @@ func getPrices(CurrencyName string, client protocolPrice.CurrencyServiceClient, 
 		if err != nil {
 			log.Fatalf("Failed to receive a note : %v", err)
 		}
-		name := in.Currency.CurrencyName
+
+		cur := model.Currency{CurrencyName: in.Currency.CurrencyName, CurrencyPrice: in.Currency.CurrencyPrice, Time: in.Currency.Time}
 		mu.Lock()
-		currencyMap[name] = *in.Currency
+		currencyMap[cur.CurrencyName] = cur
 		mu.Unlock()
 
 		log.Printf("Got currency data Name: %v Price: %v at time %v",

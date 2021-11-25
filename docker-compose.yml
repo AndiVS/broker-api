@@ -4,7 +4,7 @@ services:
     image: price_generator
     environment:
       - REDIS_HOST=172.28.1.1
-      - REDIS_PORT=6379
+      - REDIS_PORT=:6379
     depends_on:
       - redis
     deploy:
@@ -18,7 +18,8 @@ services:
     image: price_buffer
     environment:
       - REDIS_HOST=172.28.1.1
-      - REDIS_PORT=6379
+      - REDIS_PORT=:6379
+      - GRPC_BUFFER_PORT=:8081
     depends_on:
       - redis
     deploy:
@@ -31,7 +32,9 @@ services:
   transaction_broker1:
     image: transaction_broker
     environment:
-      - GRPC_BROKER_PORT=:8087
+      - GRPC_BROKER_PORT=:8083
+      - GRPC_BUFFER_PORT=:8081
+      - GRPC_BUFFER_HOST=172.28.1.9
     deploy:
       restart_policy:
         condition: on-failure
@@ -43,13 +46,15 @@ services:
     image: transaction_broker
     environment:
       - GRPC_BROKER_PORT=:8082
+      - GRPC_BUFFER_PORT=:8081
+      - GRPC_BUFFER_HOST=172.28.1.9
     deploy:
       restart_policy:
         condition: on-failure
         max_attempts: 3
     networks:
       node_net:
-        ipv4_address: 172.28.1.8
+        ipv4_address: 172.28.1.7
   flyway:
     image: flyway/flyway:6.3.1
     command: -configFiles=/flyway/conf/flyway.config -locations=filesystem:/flyway/sql -connectRetries=60 migrate

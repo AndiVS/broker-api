@@ -10,7 +10,6 @@ import (
 )
 
 func main() {
-
 	connectionBuffer := connectToBuffer()
 	go getPrices("BTC", connectionBuffer)
 	connectionBroker := connectToBroker()
