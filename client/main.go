@@ -7,7 +7,6 @@ import (
 	"google.golang.org/grpc"
 	"io"
 	"log"
-	"time"
 )
 
 func main() {
@@ -17,10 +16,14 @@ func main() {
 	subscribeToCurrency("BTC", connectionBuffer, subMap)
 	subscribeToCurrency("ETH", connectionBuffer, subMap)
 	getPrices(subMap)
-	time.Sleep(10 * time.Second)
+	for {
+
+	}
+
+	/*time.Sleep(10 * time.Second)
 	//unsubscribeFromCurrency("ETH",subMap)
 	connectionBroker := connectToBroker()
-	buyCurrency(connectionBroker, "BTC", 64)
+	buyCurrency(connectionBroker, "BTC", 64)*/
 
 }
 
@@ -37,7 +40,8 @@ func connectToBroker() protocolBroker.TransactionServiceClient {
 
 func connectToBuffer() protocolPrice.CurrencyServiceClient {
 	//addressGrcp := os.Getenv("GRPC_BUFFER_ADDRESS")
-	addressGrcp := "172.28.1.9:8081"
+	//addressGrcp := "172.28.1.9:8081"
+	addressGrcp := "localhost:8081"
 	con, err := grpc.Dial(addressGrcp, grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
 		log.Fatal("cannot dial server: ", err)
