@@ -10,7 +10,7 @@ message Currency {
 }
 
 message GetPriceRequest {
-   string name = 1;
+   repeated string name = 1;
 }
 
 message GetPriceResponse {

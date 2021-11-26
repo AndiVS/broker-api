@@ -2,7 +2,7 @@ package main
 
 import (
 	"context"
-	"github.com/AndiVS/broker-api/priceBuffer/protocolPrice"
+	"github.com/AndiVS/broker-api/priceServer/protocolPrice"
 	"github.com/AndiVS/broker-api/transactionBroker/protocolBroker"
 	"google.golang.org/grpc"
 	"io"

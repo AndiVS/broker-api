@@ -2,8 +2,9 @@
 package consumer
 
 import (
-	"github.com/AndiVS/broker-api/priceBuffer/model"
+	"github.com/AndiVS/broker-api/priceServer/model"
 	"github.com/go-redis/redis/v7"
+	"github.com/google/uuid"
 	log "github.com/sirupsen/logrus"
 	"sync"
 )
@@ -12,11 +13,11 @@ import (
 type RedisStream struct {
 	client         *redis.Client
 	mu             *sync.Mutex // protects currencyMap
-	subscribersMap map[string][]*chan *model.Currency
+	subscribersMap map[string]map[uuid.UUID]*chan *model.Currency
 }
 
 // NewRedisStream create redis stream object
-func NewRedisStream(client *redis.Client, mu *sync.Mutex, subscribersMap map[string][]*chan *model.Currency) *RedisStream {
+func NewRedisStream(client *redis.Client, mu *sync.Mutex, subscribersMap map[string]map[uuid.UUID]*chan *model.Currency) *RedisStream {
 	return &RedisStream{client: client, mu: mu, subscribersMap: subscribersMap}
 }
 

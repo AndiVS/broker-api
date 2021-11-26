@@ -6,6 +6,7 @@ package protocolBroker;
 message BuyRequest {
   string    currencyName = 1;
   int64     currencyAmount = 2;
+  price
 }
 
 message BuyResponse {
