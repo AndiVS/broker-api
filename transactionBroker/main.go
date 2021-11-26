@@ -41,7 +41,7 @@ func main() {
 
 	log.Infof("Connected!")
 
-	currencyMap := map[string]model.Currency{}
+	currencyMap := map[string]*model.Currency{}
 
 	mute := new(sync.Mutex)
 	connectionBuffer := connectToBuffer()
@@ -140,7 +140,7 @@ func connectToBuffer() protocolPrice.CurrencyServiceClient {
 	return protocolPrice.NewCurrencyServiceClient(con)
 }
 
-func getPrices(CurrencyName string, client protocolPrice.CurrencyServiceClient, mu *sync.Mutex, currencyMap map[string]model.Currency) {
+func getPrices(CurrencyName string, client protocolPrice.CurrencyServiceClient, mu *sync.Mutex, currencyMap map[string]*model.Currency) {
 	req := protocolPrice.GetPriceRequest{Name: CurrencyName}
 	stream, err := client.GetPrice(context.Background(), &req)
 	if err != nil {
@@ -157,7 +157,7 @@ func getPrices(CurrencyName string, client protocolPrice.CurrencyServiceClient, 
 
 		cur := model.Currency{CurrencyName: in.Currency.CurrencyName, CurrencyPrice: in.Currency.CurrencyPrice, Time: in.Currency.Time}
 		mu.Lock()
-		currencyMap[cur.CurrencyName] = cur
+		currencyMap[cur.CurrencyName] = &cur
 		mu.Unlock()
 
 		log.Printf("Got currency data Name: %v Price: %v at time %v",

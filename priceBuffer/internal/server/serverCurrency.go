@@ -12,11 +12,11 @@ import (
 type GRCPServer struct {
 	protocolPrice.UnimplementedCurrencyServiceServer
 	mu          *sync.Mutex // protects currencyMap
-	currencyMap map[string]model.Currency
+	currencyMap map[string]*model.Currency
 }
 
 // NewCurrencyServer create object GRCPServer
-func NewCurrencyServer(mu *sync.Mutex, currencyMap map[string]model.Currency) *GRCPServer {
+func NewCurrencyServer(mu *sync.Mutex, currencyMap map[string]*model.Currency) *GRCPServer {
 	return &GRCPServer{mu: mu, currencyMap: currencyMap}
 }
 
