@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/AndiVS/broker-api/priceBuffer/internal/consumer"
 	"github.com/AndiVS/broker-api/priceBuffer/internal/server"
+	"github.com/AndiVS/broker-api/priceBuffer/model"
 	"github.com/AndiVS/broker-api/priceBuffer/protocolPrice"
 	"github.com/go-redis/redis/v7"
 	log "github.com/sirupsen/logrus"
@@ -14,13 +15,13 @@ import (
 )
 
 func main() {
-	subscribersMap := map[string][]*protocolPrice.CurrencyService_GetPriceServer{}
+	subscribersMap := map[string][]*chan *model.Currency{}
 	mute := new(sync.Mutex)
 	go conToGrpc(mute, subscribersMap)
 	conToRedis(mute, subscribersMap)
 }
 
-func conToRedis(mu *sync.Mutex, subscribersMap map[string][]*protocolPrice.CurrencyService_GetPriceServer) {
+func conToRedis(mu *sync.Mutex, subscribersMap map[string][]*chan *model.Currency) {
 	adr := fmt.Sprintf("%s%s", os.Getenv("REDIS_HOST"), os.Getenv("REDIS_PORT"))
 	//adr := fmt.Sprintf("%s:%s", "172.28.1.1", "6379")
 	client := redis.NewClient(&redis.Options{
@@ -33,7 +34,7 @@ func conToRedis(mu *sync.Mutex, subscribersMap map[string][]*protocolPrice.Curre
 
 }
 
-func conToGrpc(mu *sync.Mutex, subscribersMap map[string][]*protocolPrice.CurrencyService_GetPriceServer) {
+func conToGrpc(mu *sync.Mutex, subscribersMap map[string][]*chan *model.Currency) {
 	//listener, err := net.Listen("tcp", os.Getenv("GRPC_BUFFER_PORT"))
 	listener, err := net.Listen("tcp", ":8081")
 
