@@ -13,7 +13,7 @@ func main() {
 	connectionPriceServer := connectToPriceServer()
 
 	subList := []string{"BTC", "ETH", "YFI"}
-	subscribeToCurrency(subList, connectionPriceServer)
+	go subscribeToCurrency(subList, connectionPriceServer)
 	//unsubscribeFromCurrency("ETH",subMap)
 	connectionPositionServer := connectToPositionServer()
 	OpenPosition(connectionPositionServer, "BTC", 64)

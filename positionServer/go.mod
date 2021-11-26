@@ -13,7 +13,6 @@ require (
 )
 
 require (
-	github.com/AndiVS/broker-api/priceBuffer v0.0.0-20211126093830-3192a3baf594 // indirect
 	github.com/golang/protobuf v1.5.0 // indirect
 	github.com/jackc/chunkreader/v2 v2.0.1 // indirect
 	github.com/jackc/pgconn v1.10.0 // indirect

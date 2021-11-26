@@ -21,7 +21,7 @@ type Config struct {
 	DBPassword string `env:"DB_PASSWORD" envDefault:"e3cr3t"`
 	DBHost     string `env:"DB_HOST" envDefault:"172.28.1.2"`
 	DBPort     int    `env:"DB_PORT" envDefault:"5432"`
-	DBName     string `env:"DB_NAME" envDefault:"transactionDB"`
+	DBName     string `env:"DB_NAME" envDefault:"positionDB"`
 
 	HashSalt                    string `env:"HASHSALT" envDefault:"HAsh_salt" json:"hash_salt,omitempty"`
 	AuthenticationKey           string `env:"AUTHENTICATIONKEY" envDefault:"authentication_key" json:"authentication_key,omitempty"`
