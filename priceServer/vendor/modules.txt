@@ -1,3 +1,7 @@
+# github.com/AndiVS/broker-api/priceBuffer v0.0.0-20211126093830-3192a3baf594
+## explicit; go 1.17
+github.com/AndiVS/broker-api/priceBuffer/model
+github.com/AndiVS/broker-api/priceBuffer/protocolPrice
 # github.com/go-redis/redis/v7 v7.4.1
 ## explicit; go 1.11
 github.com/go-redis/redis/v7
@@ -16,6 +20,7 @@ github.com/golang/protobuf/ptypes/duration
 github.com/golang/protobuf/ptypes/timestamp
 # github.com/google/uuid v1.1.2
 ## explicit
+github.com/google/uuid
 # github.com/sirupsen/logrus v1.8.1
 ## explicit; go 1.13
 github.com/sirupsen/logrus
