@@ -13,12 +13,12 @@ import (
 type TransactionServer struct {
 	Service     service.Transactions
 	mu          *sync.Mutex
-	currencyMap map[string]model.Currency
+	currencyMap map[string]*model.Currency
 	*protocolBroker.UnimplementedTransactionServiceServer
 }
 
 // NewTransactionServer constructor
-func NewTransactionServer(Service service.Transactions, mu *sync.Mutex, currencyMap map[string]model.Currency) *TransactionServer {
+func NewTransactionServer(Service service.Transactions, mu *sync.Mutex, currencyMap map[string]*model.Currency) *TransactionServer {
 	return &TransactionServer{Service: Service, mu: mu, currencyMap: currencyMap}
 }
 

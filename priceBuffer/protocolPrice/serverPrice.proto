@@ -10,11 +10,11 @@ message Currency {
 }
 
 message GetPriceRequest {
-  repeated string name = 1;
+   string name = 1;
 }
 
 message GetPriceResponse {
-  repeated Currency currency = 1;
+   Currency currency = 1;
 }
 
 service CurrencyService {

@@ -12,11 +12,11 @@ import (
 type RedisStream struct {
 	client      *redis.Client
 	mu          *sync.Mutex // protects currencyMap
-	currencyMap map[string]model.Currency
+	currencyMap map[string]*model.Currency
 }
 
 // NewRedisStream create redis stream object
-func NewRedisStream(client *redis.Client, mu *sync.Mutex, currencyMap map[string]model.Currency) *RedisStream {
+func NewRedisStream(client *redis.Client, mu *sync.Mutex, currencyMap map[string]*model.Currency) *RedisStream {
 	return &RedisStream{client: client, mu: mu, currencyMap: currencyMap}
 }
 
@@ -41,7 +41,7 @@ func (s *RedisStream) RedisConsumer() {
 			}
 
 			s.mu.Lock()
-			s.currencyMap[cur.CurrencyName] = *cur
+			s.currencyMap[cur.CurrencyName] = cur
 			s.mu.Unlock()
 			log.Printf("Get new data CurrencyName: %v, CurrencyPrice: %v, Time: %v", cur.CurrencyName, cur.CurrencyPrice, cur.Time)
 		}

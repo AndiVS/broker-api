@@ -7,11 +7,18 @@ import (
 	"google.golang.org/grpc"
 	"io"
 	"log"
+	"time"
 )
 
 func main() {
 	connectionBuffer := connectToBuffer()
-	go getPrices("BTC", connectionBuffer)
+
+	subMap := map[string]*protocolPrice.CurrencyService_GetPriceClient{}
+	subscribeToCurrency("BTC", connectionBuffer, subMap)
+	subscribeToCurrency("ETH", connectionBuffer, subMap)
+	getPrices(subMap)
+	time.Sleep(10 * time.Second)
+	//unsubscribeFromCurrency("ETH",subMap)
 	connectionBroker := connectToBroker()
 	buyCurrency(connectionBroker, "BTC", 64)
 
@@ -47,13 +54,27 @@ func buyCurrency(client protocolBroker.TransactionServiceClient, currency string
 	log.Printf("Transaction completed: %s", search.GetTransactionID())
 }
 
-func getPrices(CurrencyName string, client protocolPrice.CurrencyServiceClient) {
-
+func subscribeToCurrency(CurrencyName string, client protocolPrice.CurrencyServiceClient, subMap map[string]*protocolPrice.CurrencyService_GetPriceClient) {
 	req := protocolPrice.GetPriceRequest{Name: CurrencyName}
 	stream, err := client.GetPrice(context.Background(), &req)
 	if err != nil {
-		log.Fatalf("%v.RouteChat(_) = _, %v", client, err)
+		log.Fatalf("sub to %v err  %v", CurrencyName, err)
 	}
+	subMap[CurrencyName] = &stream
+}
+
+func unsubscribeFromCurrency(CurrencyName string, subMap map[string]*protocolPrice.CurrencyService_GetPriceClient) {
+	str := *subMap[CurrencyName]
+	str.CloseSend()
+}
+
+func getPrices(subMap map[string]*protocolPrice.CurrencyService_GetPriceClient) {
+	for _, v := range subMap {
+		go getPr(*v)
+	}
+}
+
+func getPr(stream protocolPrice.CurrencyService_GetPriceClient) {
 	for {
 		in, err := stream.Recv()
 		if err == io.EOF {
