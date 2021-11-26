@@ -6,9 +6,9 @@ import (
 	"errors"
 	"github.com/AndiVS/broker-api/positionServer/internal/model"
 	"github.com/google/uuid"
-	"github.com/jackc/pgx/v4"
 	"github.com/jackc/pgx/v4/pgxpool"
 	log "github.com/sirupsen/logrus"
+	"time"
 )
 
 var (
@@ -21,123 +21,38 @@ type Postgres struct {
 	Pool *pgxpool.Pool
 }
 
-func NewRepository(pool *pgxpool.Pool) Transactions {
+func NewRepository(pool *pgxpool.Pool) Positions {
 	return &Postgres{Pool: pool}
 }
 
-// Transactions used for structuring, function for working with records
-type Transactions interface {
-	InsertTransaction(c context.Context, transaction *model.Transaction) (*uuid.UUID, error)
-	SelectTransaction(c context.Context, id *uuid.UUID) (*model.Transaction, error)
-	SelectAllTransactions(c context.Context) ([]*model.Transaction, error)
-	SelectAllTransactionWithCurrency(c context.Context, name string) ([]*model.Transaction, error)
-	UpdateTransaction(c context.Context, transaction *model.Transaction) error
-	DeleteTransaction(c context.Context, id *uuid.UUID) error
-	DeleteALLTransactions(c context.Context, name string) error
+// Positions used for structuring, function for working with records
+type Positions interface {
+	OpenPosition(c context.Context, position *model.Position) (*uuid.UUID, error)
+	ClosePosition(c context.Context, id *uuid.UUID, closePrice *float32) error
 }
 
-// InsertTransaction function for inserting item from a table
-func (repos *Postgres) InsertTransaction(c context.Context, transaction *model.Transaction) (*uuid.UUID, error) {
+// OpenPosition function for inserting item into table
+func (repos *Postgres) OpenPosition(c context.Context, position *model.Position) (*uuid.UUID, error) {
 	row := repos.Pool.QueryRow(c,
-		"INSERT INTO transactions (transaction_id, currency_name, amount, price, transaction_time) VALUES ($1, $2, $3, $4, $5) RETURNING transaction_id",
-		transaction.TransactionID, transaction.CurrencyName, transaction.Amount, transaction.Price, transaction.TransactionTime)
+		"INSERT INTO positions (position_id, currency_name, amount, open_price, open_time) VALUES ($1, $2, $3, $4, $5) RETURNING position_id",
+		position.PositionID, position.CurrencyName, position.Amount, position.OpenPrice, position.OpenTime)
 
-	err := row.Scan(&transaction.TransactionID)
+	err := row.Scan(&position.PositionID)
 	if err != nil {
 		log.Errorf("Unable to INSERT: %v", err)
-		return &transaction.TransactionID, err
+		return &position.PositionID, err
 	}
 
-	return &transaction.TransactionID, err
+	return &position.PositionID, err
 }
 
-// SelectTransaction function for selecting item from a table
-func (repos *Postgres) SelectTransaction(c context.Context, id *uuid.UUID) (*model.Transaction, error) {
-	var transaction model.Transaction
-	row := repos.Pool.QueryRow(c,
-		"SELECT transaction_id, currency_name, amount, price, transaction_time FROM transactions WHERE transaction_id = $1", id)
-
-	err := row.Scan(&transaction.TransactionID, &transaction.CurrencyName, &transaction.Amount, &transaction.Price, &transaction.TransactionTime)
-	if errors.Is(err, pgx.ErrNoRows) {
-		log.Errorf("Not found : %s\n", err)
-		return &transaction, ErrNotFound
-	} else if err != nil {
-		return &transaction, err
-	}
-
-	log.Printf("sec")
-
-	return &transaction, err
-}
-
-// SelectAllTransactions function for selecting items from a table
-func (repos *Postgres) SelectAllTransactions(c context.Context) ([]*model.Transaction, error) {
-	var transactions []*model.Transaction
-
-	row, err := repos.Pool.Query(c,
-		"SELECT transaction_id, currency_name, amount, price, transaction_time FROM transactions")
-
-	for row.Next() {
-		var rc model.Transaction
-		err := row.Scan(&rc.TransactionID, &rc.CurrencyName, &rc.Amount, &rc.Price, &rc.TransactionTime)
-		if err == pgx.ErrNoRows {
-			return transactions, err
-		}
-		transactions = append(transactions, &rc)
-	}
-
-	return transactions, err
-}
-
-// SelectAllTransactionWithCurrency function for selecting items from a table
-func (repos *Postgres) SelectAllTransactionWithCurrency(c context.Context, name string) ([]*model.Transaction, error) {
-	var transactions []*model.Transaction
-
-	row, err := repos.Pool.Query(c,
-		"SELECT transaction_id, currency_name, amount, price, transaction_time FROM transactions WHERE currency_name = $1", name)
-
-	for row.Next() {
-		var rc model.Transaction
-		err := row.Scan(&rc.TransactionID, &rc.CurrencyName, &rc.Amount, &rc.Price, &rc.TransactionID)
-		if err == pgx.ErrNoRows {
-			return transactions, err
-		}
-		transactions = append(transactions, &rc)
-	}
-
-	return transactions, err
-}
-
-// UpdateTransaction function for updating item from a table
-func (repos *Postgres) UpdateTransaction(c context.Context, transaction *model.Transaction) error {
+func (repos *Postgres) ClosePosition(c context.Context, id *uuid.UUID, closePrice *float32) error {
 	_, err := repos.Pool.Exec(c,
-		"UPDATE transactions SET currency_name = $2, amount = $3, price = $4, transaction_time = $5 WHERE transaction_id = $1",
-		transaction.TransactionID, transaction.CurrencyName, transaction.Amount, transaction.Price, transaction.TransactionID)
+		"UPDATE positions SET close_price = $2, close_time = $3 WHERE position_id = $1",
+		id, closePrice, time.Now().String())
 
 	if err != nil {
 		log.Errorf("Failed updating data in db: %s\n", err)
-		return err
-	}
-
-	return nil
-}
-
-// DeleteTransaction function for deleting item from a table
-func (repos *Postgres) DeleteTransaction(c context.Context, id *uuid.UUID) error {
-	_, err := repos.Pool.Exec(c, "DELETE FROM transactions WHERE transaction_id = $1", id)
-
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-// DeleteALLTransactions function for deleting item from a table
-func (repos *Postgres) DeleteALLTransactions(c context.Context, name string) error {
-	_, err := repos.Pool.Exec(c, "DELETE FROM transactions WHERE currency_name = $1", name)
-
-	if err != nil {
 		return err
 	}
 

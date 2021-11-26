@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+option go_package = "./protocolPosition";
+package protocolBroker;
+
+message OpenRequest {
+  string    currencyName = 1;
+  int64     currencyAmount = 2;
+  float     price = 3;
+}
+
+message OpenResponse {
+  string positionID = 1;
+}
+
+message CloseRequest {
+  string    positionID = 1;
+  string    currencyName = 2;
+}
+
+message CloseResponse {
+  string Error = 1;
+}
+
+service PositionService {
+  rpc OpenPosition(OpenRequest) returns (OpenResponse) {
+  };
+  rpc ClosePosition(CloseRequest) returns (CloseResponse) {
+  };
+}

@@ -48,8 +48,8 @@ func main() {
 	subList := []string{"BTC", "ETH"}
 	go getPrices(subList, connectionBuffer, mute, currencyMap)
 
-	transactionService := service.NewTransactionService(recordRepository)
-	transactionServer := serverPosition.NewTransactionServer(transactionService, mute, currencyMap)
+	transactionService := service.NewPositionService(recordRepository)
+	transactionServer := serverPosition.NewPositionServer(transactionService, mute, currencyMap)
 
 	err = runGRPCServer(transactionServer)
 	if err != nil {
@@ -111,7 +111,7 @@ func listen(pool *pgxpool.Pool) {
 	}
 }
 
-func runGRPCServer(recServer protocolPosition.TransactionServiceServer) error {
+func runGRPCServer(recServer protocolPosition.PositionServiceServer) error {
 	//port := os.Getenv("GRPC_BROKER_PORT")
 	port := ":8080"
 	listener, err := net.Listen("tcp", port)
@@ -120,7 +120,7 @@ func runGRPCServer(recServer protocolPosition.TransactionServiceServer) error {
 	}
 
 	grpcServer := grpc.NewServer()
-	protocolPosition.RegisterTransactionServiceServer(grpcServer, recServer)
+	protocolPosition.RegisterPositionServiceServer(grpcServer, recServer)
 	log.Printf("server listening at %v", listener.Addr())
 	if err := grpcServer.Serve(listener); err != nil {
 		log.Fatalf("failed to serve: %v", err)
