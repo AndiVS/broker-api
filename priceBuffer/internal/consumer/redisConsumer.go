@@ -3,6 +3,7 @@ package consumer
 
 import (
 	"github.com/AndiVS/broker-api/priceBuffer/model"
+	"github.com/AndiVS/broker-api/priceBuffer/protocolPrice"
 	"github.com/go-redis/redis/v7"
 	log "github.com/sirupsen/logrus"
 	"sync"
@@ -10,14 +11,14 @@ import (
 
 // RedisStream for grpc
 type RedisStream struct {
-	client      *redis.Client
-	mu          *sync.Mutex // protects currencyMap
-	currencyMap map[string]*model.Currency
+	client         *redis.Client
+	mu             *sync.Mutex // protects currencyMap
+	subscribersMap map[string][]*protocolPrice.CurrencyService_GetPriceServer
 }
 
 // NewRedisStream create redis stream object
-func NewRedisStream(client *redis.Client, mu *sync.Mutex, currencyMap map[string]*model.Currency) *RedisStream {
-	return &RedisStream{client: client, mu: mu, currencyMap: currencyMap}
+func NewRedisStream(client *redis.Client, mu *sync.Mutex, subscribersMap map[string][]*protocolPrice.CurrencyService_GetPriceServer) *RedisStream {
+	return &RedisStream{client: client, mu: mu, subscribersMap: subscribersMap}
 }
 
 // RedisConsumer consume messages from redis
@@ -39,11 +40,14 @@ func (s *RedisStream) RedisConsumer() {
 			if err != nil {
 				log.Printf("err %v ", err)
 			}
-
 			s.mu.Lock()
-			s.currencyMap[cur.CurrencyName] = cur
+			for _, v := range s.subscribersMap[cur.CurrencyName] {
+				pcur := protocolPrice.Currency{CurrencyName: cur.CurrencyName, CurrencyPrice: cur.CurrencyPrice, Time: cur.Time}
+				(*v).Send(&protocolPrice.GetPriceResponse{Currency: &pcur})
+			}
 			s.mu.Unlock()
 			log.Printf("Get new data CurrencyName: %v, CurrencyPrice: %v, Time: %v", cur.CurrencyName, cur.CurrencyPrice, cur.Time)
+
 		}
 	}
 }
