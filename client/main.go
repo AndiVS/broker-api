@@ -10,12 +10,10 @@ import (
 )
 
 func main() {
-	connectionBuffer := connectToBuffer()
+	connectionPriceServer := connectToPriceServer()
 
-	subMap := map[string]*protocolPrice.CurrencyService_GetPriceClient{}
-	subscribeToCurrency("BTC", connectionBuffer, subMap)
-	subscribeToCurrency("ETH", connectionBuffer, subMap)
-	getPrices(subMap)
+	subList := []string{"BTC", "ETH", "YFI"}
+	subscribeToCurrency(subList, connectionPriceServer)
 	for {
 
 	}
@@ -38,10 +36,10 @@ func connectToBroker() protocolBroker.TransactionServiceClient {
 	return protocolBroker.NewTransactionServiceClient(con)
 }
 
-func connectToBuffer() protocolPrice.CurrencyServiceClient {
+func connectToPriceServer() protocolPrice.CurrencyServiceClient {
 	//addressGrcp := os.Getenv("GRPC_BUFFER_ADDRESS")
-	//addressGrcp := "172.28.1.9:8081"
-	addressGrcp := "localhost:8081"
+	addressGrcp := "172.28.1.9:8081"
+	//addressGrcp := "localhost:8081"
 	con, err := grpc.Dial(addressGrcp, grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
 		log.Fatal("cannot dial server: ", err)
@@ -58,27 +56,12 @@ func buyCurrency(client protocolBroker.TransactionServiceClient, currency string
 	log.Printf("Transaction completed: %s", search.GetTransactionID())
 }
 
-func subscribeToCurrency(CurrencyName string, client protocolPrice.CurrencyServiceClient, subMap map[string]*protocolPrice.CurrencyService_GetPriceClient) {
-	req := protocolPrice.GetPriceRequest{Name: CurrencyName}
+func subscribeToCurrency(subList []string, client protocolPrice.CurrencyServiceClient) {
+	req := protocolPrice.GetPriceRequest{Name: subList}
 	stream, err := client.GetPrice(context.Background(), &req)
 	if err != nil {
-		log.Fatalf("sub to %v err  %v", CurrencyName, err)
+		log.Fatalf("sub err  %v", err)
 	}
-	subMap[CurrencyName] = &stream
-}
-
-func unsubscribeFromCurrency(CurrencyName string, subMap map[string]*protocolPrice.CurrencyService_GetPriceClient) {
-	str := *subMap[CurrencyName]
-	str.CloseSend()
-}
-
-func getPrices(subMap map[string]*protocolPrice.CurrencyService_GetPriceClient) {
-	for _, v := range subMap {
-		go getPr(*v)
-	}
-}
-
-func getPr(stream protocolPrice.CurrencyService_GetPriceClient) {
 	for {
 		in, err := stream.Recv()
 		if err == io.EOF {
@@ -91,4 +74,5 @@ func getPr(stream protocolPrice.CurrencyService_GetPriceClient) {
 		log.Printf("Got currency data Name: %v Price: %v at time %v",
 			in.Currency.CurrencyName, in.Currency.CurrencyPrice, in.Currency.Time)
 	}
+
 }

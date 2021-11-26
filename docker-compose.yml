@@ -14,8 +14,8 @@ services:
     networks:
       node_net:
         ipv4_address: 172.28.1.10
-  price_buffer:
-    image: price_buffer
+  price_server:
+    image: price_server
     environment:
       - REDIS_HOST=172.28.1.1
       - REDIS_PORT=:6379
@@ -59,8 +59,8 @@ services:
     image: flyway/flyway:6.3.1
     command: -configFiles=/flyway/conf/flyway.config -locations=filesystem:/flyway/sql -connectRetries=60 migrate
     volumes:
-      - ./transactionBroker/migrations:/flyway/sql
-      - ./transactionBroker/docker-flyway.config:/flyway/conf/flyway.config
+      - ./positionServer/migrations:/flyway/sql
+      - ./positionServer/docker-flyway.config:/flyway/conf/flyway.config
     depends_on:
       - postgres
     networks:

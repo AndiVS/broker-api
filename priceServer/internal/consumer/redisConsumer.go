@@ -27,7 +27,6 @@ func (s *RedisStream) RedisConsumer() {
 		streams, err := s.client.XRead(&redis.XReadArgs{
 			Streams: []string{"PriceGenerator", "$"},
 		}).Result()
-
 		if err != nil {
 			log.Printf("err on consume events: %+v\n", err)
 		}
@@ -40,9 +39,11 @@ func (s *RedisStream) RedisConsumer() {
 			if err != nil {
 				log.Printf("err %v ", err)
 			}
+
 			s.mu.Lock()
-			for _, v := range s.subscribersMap[cur.CurrencyName] {
-				*v <- cur
+			for _, ch := range s.subscribersMap[cur.CurrencyName] {
+				send := *cur
+				*ch <- &send
 			}
 			s.mu.Unlock()
 			log.Printf("Get new data CurrencyName: %v, CurrencyPrice: %v, Time: %v", cur.CurrencyName, cur.CurrencyPrice, cur.Time)
