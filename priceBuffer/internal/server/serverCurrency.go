@@ -2,6 +2,7 @@
 package server
 
 import (
+	"github.com/AndiVS/broker-api/priceBuffer/model"
 	"github.com/AndiVS/broker-api/priceBuffer/protocolPrice"
 	"sync"
 )
@@ -10,40 +11,27 @@ import (
 type GRCPServer struct {
 	protocolPrice.UnimplementedCurrencyServiceServer
 	mu             *sync.Mutex // protects currencyMap
-	subscribersMap map[string][]*protocolPrice.CurrencyService_GetPriceServer
+	subscribersMap map[string][]*chan *model.Currency
 }
 
 // NewCurrencyServer create object GRCPServer
-func NewCurrencyServer(mu *sync.Mutex, subscribersMap map[string][]*protocolPrice.CurrencyService_GetPriceServer) *GRCPServer {
+func NewCurrencyServer(mu *sync.Mutex, subscribersMap map[string][]*chan *model.Currency) *GRCPServer {
 	return &GRCPServer{mu: mu, subscribersMap: subscribersMap}
 }
 
 // GetPrice method of price buffer server
 func (s *GRCPServer) GetPrice(request *protocolPrice.GetPriceRequest, stream protocolPrice.CurrencyService_GetPriceServer) error {
 	key := request.Name
+	c := make(chan *model.Currency)
 	s.mu.Lock()
-	s.subscribersMap[key] = append(s.subscribersMap[key], &stream)
+	s.subscribersMap[key] = append(s.subscribersMap[key], &c)
 	s.mu.Unlock()
 	for {
-	}
-}
-
-/*// GetPrice method of price buffer server
-func (s *GRCPServer) GetPrice(request *protocolPrice.GetPriceRequest, stream protocolPrice.CurrencyService_GetPriceServer) error {
-	var curSl []*protocolPrice.Currency
-	for {
-		time.Sleep(5 * time.Second)
-		for _, v := range request.Name {
-			s.mu.Lock()
-			resp := s.currencyMap[v]
-			s.mu.Unlock()
-			cur := protocolPrice.Currency{CurrencyName: resp.CurrencyName, CurrencyPrice: resp.CurrencyPrice, Time: resp.Time}
-			curSl = append(curSl, &cur)
-		}
-		err := stream.Send(&protocolPrice.GetPriceResponse{Currency: curSl})
+		cur := <-c
+		pcur := protocolPrice.Currency{CurrencyName: cur.CurrencyName, CurrencyPrice: cur.CurrencyPrice, Time: cur.Time}
+		err := stream.Send(&protocolPrice.GetPriceResponse{Currency: &pcur})
 		if err != nil {
 			return err
 		}
-		curSl = nil
 	}
-}*/
+}
