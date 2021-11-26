@@ -2,8 +2,8 @@ package main
 
 import (
 	"context"
+	"github.com/AndiVS/broker-api/positionServer/protocolPosition"
 	"github.com/AndiVS/broker-api/priceServer/protocolPrice"
-	"github.com/AndiVS/broker-api/transactionBroker/protocolBroker"
 	"google.golang.org/grpc"
 	"io"
 	"log"
@@ -13,19 +13,14 @@ func main() {
 	connectionPriceServer := connectToPriceServer()
 
 	subList := []string{"BTC", "ETH", "YFI"}
-	subscribeToCurrency(subList, connectionPriceServer)
-	for {
-
-	}
-
-	/*time.Sleep(10 * time.Second)
+	go subscribeToCurrency(subList, connectionPriceServer)
 	//unsubscribeFromCurrency("ETH",subMap)
-	connectionBroker := connectToBroker()
-	buyCurrency(connectionBroker, "BTC", 64)*/
+	connectionPositionServer := connectToPositionServer()
+	OpenPosition(connectionPositionServer, "BTC", 64)
 
 }
 
-func connectToBroker() protocolBroker.TransactionServiceClient {
+func connectToPositionServer() protocolPosition.PositionServiceClient {
 	//addressGRPC := os.Getenv("GRPC_BROKER_ADDRESS")
 	addressGrcp := "localhost:8080"
 	con, err := grpc.Dial(addressGrcp, grpc.WithInsecure(), grpc.WithBlock())
@@ -33,7 +28,7 @@ func connectToBroker() protocolBroker.TransactionServiceClient {
 		log.Fatal("cannot dial server: ", err)
 	}
 
-	return protocolBroker.NewTransactionServiceClient(con)
+	return protocolPosition.NewPositionServiceClient(con)
 }
 
 func connectToPriceServer() protocolPrice.CurrencyServiceClient {
@@ -48,12 +43,12 @@ func connectToPriceServer() protocolPrice.CurrencyServiceClient {
 	return protocolPrice.NewCurrencyServiceClient(con)
 }
 
-func buyCurrency(client protocolBroker.TransactionServiceClient, currency string, amount int64) {
-	search, err := client.BuyCurrency(context.Background(), &protocolBroker.BuyRequest{CurrencyName: currency, CurrencyAmount: amount})
+func OpenPosition(client protocolPosition.PositionServiceClient, currency string, amount int64) {
+	search, err := client.OpenPosition(context.Background(), &protocolPosition.OpenRequest{CurrencyName: currency, CurrencyAmount: amount})
 	if err != nil {
 		log.Panicf("Error while buying currency: %v", err)
 	}
-	log.Printf("Transaction completed: %s", search.GetTransactionID())
+	log.Printf("Transaction completed: %s", search.GetPositionID())
 }
 
 func subscribeToCurrency(subList []string, client protocolPrice.CurrencyServiceClient) {

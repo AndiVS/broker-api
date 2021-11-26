@@ -29,8 +29,8 @@ services:
     networks:
       node_net:
         ipv4_address: 172.28.1.9
-  transaction_broker1:
-    image: transaction_broker
+  position_server1:
+    image: position_server
     environment:
       - GRPC_BROKER_PORT=:8083
       - GRPC_BUFFER_PORT=:8081
@@ -42,8 +42,8 @@ services:
     networks:
       node_net:
         ipv4_address: 172.28.1.8
-  transaction_broker2:
-    image: transaction_broker
+  position_server2:
+    image: position_server
     environment:
       - GRPC_BROKER_PORT=:8082
       - GRPC_BUFFER_PORT=:8081
@@ -69,7 +69,7 @@ services:
     container_name: broker_api
     image: postgres:13.3
     environment:
-      POSTGRES_DB: "transactionDB"
+      POSTGRES_DB: "positionDB"
       POSTGRES_USER: "andeisaldyun"
       POSTGRES_PASSWORD: "e3cr3t"
       FLYWAY_URL:
@@ -81,7 +81,7 @@ services:
       node_net:
         ipv4_address: 172.28.1.2
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U andeisaldyun -d transactionDB" ]
+      test: [ "CMD-SHELL", "pg_isready -U andeisaldyun -d positionDB" ]
       interval: 10s
       timeout: 5s
       retries: 5
