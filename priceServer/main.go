@@ -16,7 +16,11 @@ import (
 )
 
 func main() {
-	subscribersMap := map[string]map[uuid.UUID]*chan *model.Currency{}
+	subscribersMap := map[string]map[uuid.UUID]*chan *model.Currency{
+		"BTC": map[uuid.UUID]*chan *model.Currency{},
+		"ETH": map[uuid.UUID]*chan *model.Currency{},
+		"YFI": map[uuid.UUID]*chan *model.Currency{},
+	}
 	mute := new(sync.Mutex)
 	go conToGrpc(mute, subscribersMap)
 	conToRedis(mute, subscribersMap)
@@ -36,8 +40,8 @@ func conToRedis(mu *sync.Mutex, subscribersMap map[string]map[uuid.UUID]*chan *m
 }
 
 func conToGrpc(mu *sync.Mutex, subscribersMap map[string]map[uuid.UUID]*chan *model.Currency) {
-	//listener, err := net.Listen("tcp", os.Getenv("GRPC_BUFFER_PORT"))
-	listener, err := net.Listen("tcp", ":8081")
+	listener, err := net.Listen("tcp", os.Getenv("GRPC_BUFFER_PORT"))
+	//listener, err := net.Listen("tcp", ":8081")
 
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)

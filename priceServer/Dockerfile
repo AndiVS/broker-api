@@ -17,4 +17,4 @@ COPY /model /model
 
 RUN go build -tags musl ./..
 
-CMD [ "/priceBuffer" ]
+CMD [ "/priceServer" ]

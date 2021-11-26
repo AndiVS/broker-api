@@ -22,19 +22,26 @@ func NewCurrencyServer(mu *sync.Mutex, subscribersMap map[string]map[uuid.UUID]*
 
 // GetPrice method of price buffer server
 func (s *GRCPServer) GetPrice(request *protocolPrice.GetPriceRequest, stream protocolPrice.CurrencyService_GetPriceServer) error {
-	key := request.Name
-	c := make(chan *model.Currency)
 	id := uuid.New()
-	s.mu.Lock()
-	s.subscribersMap[key][id] = &c
-	s.mu.Unlock()
+	ac := make(chan *model.Currency)
+	//	<-c
+	for _, v := range request.Name {
+		s.mu.Lock()
+		s.subscribersMap[v][id] = &ac
+		s.mu.Unlock()
+	}
+
 	for {
-		cur := <-c
+		cur := <-ac
 		pcur := protocolPrice.Currency{CurrencyName: cur.CurrencyName, CurrencyPrice: cur.CurrencyPrice, Time: cur.Time}
 		err := stream.Send(&protocolPrice.GetPriceResponse{Currency: &pcur})
 		if err != nil {
-			<-c
-			delete(s.subscribersMap[key], id)
+			<-ac
+			for _, v := range request.Name {
+				s.mu.Lock()
+				delete(s.subscribersMap[v], id)
+				s.mu.Unlock()
+			}
 			return err
 		}
 	}

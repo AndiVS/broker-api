@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/AndiVS/broker-api/priceBuffer/model"
+	"github.com/AndiVS/broker-api/priceServer/model"
 	"github.com/go-redis/redis/v7"
 	log "github.com/sirupsen/logrus"
 	"math/rand"
@@ -66,6 +66,11 @@ func generateCurrencyMap() map[string]interface{} {
 	currMap["ETH"] = &model.Currency{
 		CurrencyName:  "ETH",
 		CurrencyPrice: 4300.555,
+		Time:          time.Now().Format(timeFormat),
+	}
+	currMap["YFI"] = &model.Currency{
+		CurrencyName:  "YFI",
+		CurrencyPrice: 30000.000,
 		Time:          time.Now().Format(timeFormat),
 	}
 	/*		currMap["BTC2"] = &protocolPrice.Currency{
