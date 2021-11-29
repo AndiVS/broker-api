@@ -5,7 +5,7 @@ import (
 	"github.com/AndiVS/broker-api/priceServer/internal/consumer"
 	"github.com/AndiVS/broker-api/priceServer/internal/server"
 	"github.com/AndiVS/broker-api/priceServer/model"
-	"github.com/AndiVS/broker-api/priceServer/protocolPrice"
+	"github.com/AndiVS/broker-api/priceServer/priceProtocol"
 	"github.com/go-redis/redis/v7"
 	"github.com/google/uuid"
 	log "github.com/sirupsen/logrus"
@@ -17,9 +17,9 @@ import (
 
 func main() {
 	subscribersMap := map[string]map[uuid.UUID]*chan *model.Currency{
-		"BTC": map[uuid.UUID]*chan *model.Currency{},
-		"ETH": map[uuid.UUID]*chan *model.Currency{},
-		"YFI": map[uuid.UUID]*chan *model.Currency{},
+		"BTC": {},
+		"ETH": {},
+		"YFI": {},
 	}
 	mute := new(sync.Mutex)
 	go conToGrpc(mute, subscribersMap)
@@ -48,7 +48,7 @@ func conToGrpc(mu *sync.Mutex, subscribersMap map[string]map[uuid.UUID]*chan *mo
 	}
 	// create grpc server
 	grpcServer := grpc.NewServer()
-	protocolPrice.RegisterCurrencyServiceServer(grpcServer, server.NewCurrencyServer(mu, subscribersMap))
+	priceProtocol.RegisterCurrencyServiceServer(grpcServer, server.NewCurrencyServer(mu, subscribersMap))
 
 	log.Println("start server")
 	if err := grpcServer.Serve(listener); err != nil {

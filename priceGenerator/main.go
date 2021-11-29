@@ -55,7 +55,7 @@ func generatePrice(currMap map[string]interface{}) {
 }
 
 func generateCurrencyMap() map[string]interface{} {
-	//currMap := make(map[string]*protocolPrice.Currency)
+	//currMap := make(map[string]*priceProtocol.Currency)
 	currMap := make(map[string]interface{})
 
 	currMap["BTC"] = &model.Currency{
@@ -73,17 +73,17 @@ func generateCurrencyMap() map[string]interface{} {
 		CurrencyPrice: 30000.000,
 		Time:          time.Now().Format(timeFormat),
 	}
-	/*		currMap["BTC2"] = &protocolPrice.Currency{
+	/*		currMap["BTC2"] = &priceProtocol.Currency{
 				CurrencyName:  "BTC2",
 				CurrencyPrice: 55555.555,
 				Time:          time.Now().Format(timeFormat),
 			}
-			currMap["BTC3"] = &protocolPrice.Currency{
+			currMap["BTC3"] = &priceProtocol.Currency{
 				CurrencyName:  "BTC3",
 				CurrencyPrice: 55555.555,
 				Time:          time.Now().Format(timeFormat),
 			}
-			currMap["BTC4"] = &protocolPrice.Currency{
+			currMap["BTC4"] = &priceProtocol.Currency{
 				CurrencyName:  "BTC4",
 				CurrencyPrice: 55555.555,
 				Time:          time.Now().Format(timeFormat),

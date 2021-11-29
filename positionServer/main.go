@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"github.com/AndiVS/broker-api/positionServer/internal/config"
 	modelLokal "github.com/AndiVS/broker-api/positionServer/internal/model"
+	"github.com/AndiVS/broker-api/positionServer/internal/positionServer"
 	"github.com/AndiVS/broker-api/positionServer/internal/repository"
-	"github.com/AndiVS/broker-api/positionServer/internal/serverPosition"
 	"github.com/AndiVS/broker-api/positionServer/internal/service"
 	"github.com/AndiVS/broker-api/positionServer/protocolPosition"
 	"github.com/AndiVS/broker-api/priceServer/model"
@@ -57,7 +57,7 @@ func main() {
 	go getPrices(subList, connectionBuffer, mute, &currencyMap, &positionMap)
 
 	transactionService := service.NewPositionService(recordRepository)
-	transactionServer := serverPosition.NewPositionServer(transactionService, mute, &currencyMap)
+	transactionServer := positionServer.NewPositionServer(transactionService, mute, &currencyMap)
 
 	err = runGRPCServer(transactionServer)
 	if err != nil {

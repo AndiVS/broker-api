@@ -2,7 +2,7 @@
 // versions:
 // 	protoc-gen-go v1.27.1
 // 	protoc        v3.17.3
-// source: protocolPosition/serverPosition.proto
+// source: protocolPosition/positionServer.proto
 
 package protocolPosition
 
