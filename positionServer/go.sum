@@ -1,8 +1,7 @@
 cloud.google.com/go v0.26.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
 cloud.google.com/go v0.34.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
-github.com/AndiVS/broker-api/priceBuffer v0.0.0-20211126093830-3192a3baf594/go.mod h1:zvhi1A7JLupaGED3yry0qnepWOvWlKCoGUVqcpqqicA=
-github.com/AndiVS/broker-api/priceServer v0.0.0-20211126124928-2db798cb416c h1:39eh0B9OnQFzYk0aPQS9QVbH9Jz1ewYup9755LllKiM=
-github.com/AndiVS/broker-api/priceServer v0.0.0-20211126124928-2db798cb416c/go.mod h1:eB2+nj3ucJ9DCi8UZLGqJnq1CNYYBA5skHSKS3AAMZc=
+github.com/AndiVS/broker-api/priceServer v0.0.0-20211129162640-850f36ff147a h1:ova1qwZhWY6Bm110xHyjemN3ULRlJFgdNNIbOGqOqjs=
+github.com/AndiVS/broker-api/priceServer v0.0.0-20211129162640-850f36ff147a/go.mod h1:n/KPeQkUhullwW51HdUVPxiqSOZMUv0H5cfbBFGQAvo=
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
 github.com/Masterminds/semver/v3 v3.1.1/go.mod h1:VPu/7SZ7ePZ3QOrcuXROw5FAcLl4a0cBrbBpGY/8hQs=
 github.com/antihax/optional v1.0.0/go.mod h1:uupD/76wgC+ih3iEmQUL+0Ugr19nfwCT1kdvxnR2qWY=

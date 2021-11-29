@@ -4,11 +4,12 @@ package repository
 import (
 	"context"
 	"errors"
+	"time"
+
 	"github.com/AndiVS/broker-api/positionServer/internal/model"
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v4/pgxpool"
 	log "github.com/sirupsen/logrus"
-	"time"
 )
 
 const timeFormat = "2006-01-02 15:04:05.000000000"
@@ -43,10 +44,10 @@ func (repos *Postgres) OpenPosition(c context.Context, position *model.Position)
 	err := row.Scan(&position.PositionID)
 	if err != nil {
 		log.Errorf("Unable to INSERT: %v", err)
-		return &position.PositionID, err
+		return position.PositionID, err
 	}
 
-	return &position.PositionID, err
+	return position.PositionID, err
 }
 
 // ClosePosition function for updating item into table

@@ -2,11 +2,11 @@
 package server
 
 import (
+	"sync"
+
 	"github.com/AndiVS/broker-api/priceServer/model"
 	"github.com/AndiVS/broker-api/priceServer/priceProtocol"
 	"github.com/google/uuid"
-
-	"sync"
 )
 
 // GRCPServer for grpc
@@ -25,7 +25,6 @@ func NewCurrencyServer(mu *sync.Mutex, subscribersMap map[string]map[uuid.UUID]*
 func (s *GRCPServer) GetPrice(request *priceProtocol.GetPriceRequest, stream priceProtocol.CurrencyService_GetPriceServer) error {
 	id := uuid.New()
 	ac := make(chan *model.Currency)
-	//	<-c
 	for _, v := range request.Name {
 		s.mu.Lock()
 		s.subscribersMap[v][id] = &ac
@@ -38,7 +37,6 @@ func (s *GRCPServer) GetPrice(request *priceProtocol.GetPriceRequest, stream pri
 		err := stream.Send(&priceProtocol.GetPriceResponse{Currency: &pcur})
 		if err != nil {
 			for _, v := range request.Name {
-				// <-s.subscribersMap[v][id]
 				<-ac
 				delete(s.subscribersMap[v], id)
 			}

@@ -7,23 +7,23 @@ import (
 	"sync"
 	"time"
 
-	"github.com/AndiVS/broker-api/positionServer/protocolPosition"
+	"github.com/AndiVS/broker-api/positionServer/positionProtocol"
 	"github.com/AndiVS/broker-api/priceServer/model"
-	"github.com/AndiVS/broker-api/priceServer/protocolPrice"
+	"github.com/AndiVS/broker-api/priceServer/priceProtocol"
 	"google.golang.org/grpc"
 )
 
 // PriceServer struct for renew price
 type PriceServer struct {
 	subList     []string
-	connection  protocolPrice.CurrencyServiceClient
+	connection  priceProtocol.CurrencyServiceClient
 	currencyMap *map[string]*model.Currency
 	mutex       *sync.Mutex
 }
 
 // PositionServer struct for opening and closing a position
 type PositionServer struct {
-	connection  protocolPosition.PositionServiceClient
+	connection  positionProtocol.PositionServiceClient
 	currencyMap *map[string]*model.Currency
 	mutex       *sync.Mutex
 	positionMap map[string]map[string]bool
@@ -57,7 +57,6 @@ func main() {
 
 	go priceServ.subscribeToCurrency()
 
-	// unsubscribeFromCurrency("ETH",subMap)
 	time.Sleep(5 * time.Second)
 
 	posServ.openPosition("BTC", 64)
@@ -70,31 +69,29 @@ func main() {
 
 func (s *PositionServer) connectToPositionServer() {
 	// addressGRPC := os.Getenv("GRPC_BROKER_ADDRESS")
-	// addressGrcp := "localhost:8080"
 	addressGrcp := "172.28.1.8:8083"
 	con, err := grpc.Dial(addressGrcp, grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
 		log.Fatal("cannot dial server: ", err)
 	}
 
-	s.connection = protocolPosition.NewPositionServiceClient(con)
+	s.connection = positionProtocol.NewPositionServiceClient(con)
 }
 
 func (s *PriceServer) connectToPriceServer() {
 	// addressGrcp := os.Getenv("GRPC_BUFFER_ADDRESS")
 	addressGrcp := "172.28.1.9:8081"
-	// addressGrcp := ":8081"
 	con, err := grpc.Dial(addressGrcp, grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
 		log.Fatal("cannot dial server: ", err)
 	}
 
-	s.connection = protocolPrice.NewCurrencyServiceClient(con)
+	s.connection = priceProtocol.NewCurrencyServiceClient(con)
 }
 
 func (s *PositionServer) openPosition(currency string, amount int64) string {
 	open, err := s.connection.OpenPosition(context.Background(),
-		&protocolPosition.OpenRequest{CurrencyName: currency, CurrencyAmount: amount, Price: (*s.currencyMap)[currency].CurrencyPrice})
+		&positionProtocol.OpenRequest{CurrencyName: currency, CurrencyAmount: amount, Price: (*s.currencyMap)[currency].CurrencyPrice})
 	if err != nil {
 		log.Printf("Error while opening position: %v", err)
 	}
@@ -104,7 +101,7 @@ func (s *PositionServer) openPosition(currency string, amount int64) string {
 }
 
 func (s *PositionServer) closePosition(id, currency string) {
-	_, err := s.connection.ClosePosition(context.Background(), &protocolPosition.CloseRequest{PositionID: id, CurrencyName: currency})
+	_, err := s.connection.ClosePosition(context.Background(), &positionProtocol.CloseRequest{PositionID: id, CurrencyName: currency})
 	if err != nil {
 		log.Printf("Error while closing position: %v", err)
 	} else {
@@ -114,7 +111,7 @@ func (s *PositionServer) closePosition(id, currency string) {
 }
 
 func (s *PriceServer) subscribeToCurrency() {
-	req := protocolPrice.GetPriceRequest{Name: s.subList}
+	req := priceProtocol.GetPriceRequest{Name: s.subList}
 	stream, err := s.connection.GetPrice(context.Background(), &req)
 	if err != nil {
 		log.Fatalf("sub err  %v", err)

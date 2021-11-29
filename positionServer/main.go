@@ -3,10 +3,15 @@ package main
 import (
 	"context"
 	"fmt"
+	"io"
+	"net"
+	"os"
+	"sync"
+
 	"github.com/AndiVS/broker-api/positionServer/internal/config"
-	modelLokal "github.com/AndiVS/broker-api/positionServer/internal/model"
-	positionserver "github.com/AndiVS/broker-api/positionServer/internal/positionServer"
+	modelLocal "github.com/AndiVS/broker-api/positionServer/internal/model"
 	"github.com/AndiVS/broker-api/positionServer/internal/repository"
+	"github.com/AndiVS/broker-api/positionServer/internal/server"
 	"github.com/AndiVS/broker-api/positionServer/internal/service"
 	"github.com/AndiVS/broker-api/positionServer/positionProtocol"
 	"github.com/AndiVS/broker-api/priceServer/model"
@@ -15,10 +20,6 @@ import (
 	"github.com/jackc/pgx/v4/pgxpool"
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
-	"io"
-	"net"
-	"os"
-	"sync"
 )
 
 func main() {
@@ -49,24 +50,20 @@ func main() {
 		"YFI": {},
 	}
 
-	go listen(pool, &positionMap)
+	go listen(pool, positionMap)
 
 	mute := new(sync.Mutex)
 	connectionBuffer := connectToPriceServer()
 	subList := []string{"BTC", "ETH"}
-	go getPrices(subList, connectionBuffer, mute, &currencyMap, &positionMap)
+	go getPrices(subList, connectionBuffer, mute, currencyMap, positionMap)
 
 	transactionService := service.NewPositionService(recordRepository)
-	transactionServer := positionserver.NewPositionServer(transactionService, mute, &currencyMap)
+	transactionServer := server.NewPositionServer(transactionService, mute, currencyMap)
 
 	err = runGRPCServer(transactionServer)
 	if err != nil {
 		log.Printf("err in grpc run %v", err)
 	}
-
-	/*connectionBuffer := connectToBuffer()
-	getPrices(connectionBuffer)
-	*/
 }
 
 func setLog() {
@@ -97,7 +94,7 @@ func getPostgres(url string) *pgxpool.Pool {
 	return pool
 }
 
-func listen(pool *pgxpool.Pool, positionMap *map[string]map[uuid.UUID]*chan *model.Currency) {
+func listen(pool *pgxpool.Pool, positionMap map[string]map[uuid.UUID]*chan *model.Currency) {
 	conn, err := pool.Acquire(context.Background())
 	if err != nil {
 		log.Println("Error acquiring connection:", err)
@@ -115,9 +112,7 @@ func listen(pool *pgxpool.Pool, positionMap *map[string]map[uuid.UUID]*chan *mod
 			log.Println("Error waiting for notification:", err)
 		}
 
-		//log.Println("PID:", notification.PID, "Channel:", notification.Channel, "Payload:", notification.Payload)
-
-		pos := modelLokal.Position{}
+		pos := modelLocal.Position{}
 		err = pos.UnmarshalBinary([]byte(notification.Payload))
 		if err != nil {
 			log.Println("Error waiting for notification:", err)
@@ -126,21 +121,19 @@ func listen(pool *pgxpool.Pool, positionMap *map[string]map[uuid.UUID]*chan *mod
 		switch pos.Event {
 		case "INSERT":
 			log.Printf("Open position with id %v currency name %v open price %v open time %v", pos.PositionID, pos.CurrencyName, pos.OpenPrice, pos.OpenTime)
-			(*positionMap)[pos.CurrencyName][pos.PositionID] = &ch
+			positionMap[pos.CurrencyName][*pos.PositionID] = &ch
 			go evaluateProfit(&pos, ch)
 		case "UPDATE":
-			profit := (pos.ClosePrice - pos.OpenPrice) * float32(pos.Amount)
+			profit := (*pos.ClosePrice - *pos.OpenPrice) * float32(*pos.Amount)
 			log.Printf("Position id %v close with profit %v", pos.PositionID.String(), profit)
-			close(*(*positionMap)[pos.CurrencyName][pos.PositionID])
-			delete((*positionMap)[pos.CurrencyName], pos.PositionID)
+			close(*positionMap[pos.CurrencyName][*pos.PositionID])
+			delete(positionMap[pos.CurrencyName], *pos.PositionID)
 		}
-
 	}
 }
 
 func runGRPCServer(recServer positionProtocol.PositionServiceServer) error {
 	port := os.Getenv("GRPC_BROKER_PORT")
-	//port := ":8080"
 	listener, err := net.Listen("tcp", port)
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
@@ -158,7 +151,6 @@ func runGRPCServer(recServer positionProtocol.PositionServiceServer) error {
 
 func connectToPriceServer() priceProtocol.CurrencyServiceClient {
 	addressGrcp := fmt.Sprintf("%s%s", os.Getenv("GRPC_BUFFER_HOST"), os.Getenv("GRPC_BUFFER_PORT"))
-	//addressGrcp := "172.28.1.9:8081"
 
 	con, err := grpc.Dial(addressGrcp, grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
@@ -169,7 +161,7 @@ func connectToPriceServer() priceProtocol.CurrencyServiceClient {
 }
 
 func getPrices(CurrencyName []string, client priceProtocol.CurrencyServiceClient, mu *sync.Mutex,
-	currencyMap *map[string]*model.Currency, positionMap *map[string]map[uuid.UUID]*chan *model.Currency) {
+	currencyMap map[string]*model.Currency, positionMap map[string]map[uuid.UUID]*chan *model.Currency) {
 	req := priceProtocol.GetPriceRequest{Name: CurrencyName}
 	stream, err := client.GetPrice(context.Background(), &req)
 	if err != nil {
@@ -186,23 +178,21 @@ func getPrices(CurrencyName []string, client priceProtocol.CurrencyServiceClient
 
 		cur := model.Currency{CurrencyName: in.Currency.CurrencyName, CurrencyPrice: in.Currency.CurrencyPrice, Time: in.Currency.Time}
 		mu.Lock()
-		(*currencyMap)[cur.CurrencyName] = &cur
-		for _, v := range (*positionMap)[cur.CurrencyName] {
+		currencyMap[cur.CurrencyName] = &cur
+		for _, v := range positionMap[cur.CurrencyName] {
 			*v <- &cur
 		}
 		mu.Unlock()
-		/*log.Printf("Got currency data Name: %v Price: %v at time %v",
-		in.Currency.CurrencyName, in.Currency.CurrencyPrice, in.Currency.Time)*/
 	}
 }
 
-func evaluateProfit(pos *modelLokal.Position, ch chan *model.Currency) {
+func evaluateProfit(pos *modelLocal.Position, ch chan *model.Currency) {
 	for {
 		current, ok := <-ch
 		if ok {
-			profit := (current.CurrencyPrice - pos.OpenPrice) * float32(pos.Amount)
+			profit := (current.CurrencyPrice - *pos.OpenPrice) * float32(*pos.Amount)
 
-			log.Printf("For position %v, profit %v at time %v   (open price: %v current price %v ammount %v)", pos.PositionID, profit,
+			log.Printf("For position %v, profit %v at time %v   (open price: %v current price %v amount %v)", pos.PositionID, profit,
 				current.Time, pos.OpenPrice, current.CurrencyPrice, pos.Amount)
 		} else {
 			return
