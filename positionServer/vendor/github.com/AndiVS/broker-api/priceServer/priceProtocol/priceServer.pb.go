@@ -2,9 +2,9 @@
 // versions:
 // 	protoc-gen-go v1.27.1
 // 	protoc        v3.17.3
-// source: protocolPrice/serverPrice.proto
+// source: priceProtocol/priceServer.proto
 
-package protocolPrice
+package priceProtocol
 
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
@@ -33,7 +33,7 @@ type Currency struct {
 func (x *Currency) Reset() {
 	*x = Currency{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_protocolPrice_serverPrice_proto_msgTypes[0]
+		mi := &file_priceProtocol_priceServer_proto_msgTypes[0]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -46,7 +46,7 @@ func (x *Currency) String() string {
 func (*Currency) ProtoMessage() {}
 
 func (x *Currency) ProtoReflect() protoreflect.Message {
-	mi := &file_protocolPrice_serverPrice_proto_msgTypes[0]
+	mi := &file_priceProtocol_priceServer_proto_msgTypes[0]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -59,7 +59,7 @@ func (x *Currency) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Currency.ProtoReflect.Descriptor instead.
 func (*Currency) Descriptor() ([]byte, []int) {
-	return file_protocolPrice_serverPrice_proto_rawDescGZIP(), []int{0}
+	return file_priceProtocol_priceServer_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *Currency) GetCurrencyName() string {
@@ -94,7 +94,7 @@ type GetPriceRequest struct {
 func (x *GetPriceRequest) Reset() {
 	*x = GetPriceRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_protocolPrice_serverPrice_proto_msgTypes[1]
+		mi := &file_priceProtocol_priceServer_proto_msgTypes[1]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -107,7 +107,7 @@ func (x *GetPriceRequest) String() string {
 func (*GetPriceRequest) ProtoMessage() {}
 
 func (x *GetPriceRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_protocolPrice_serverPrice_proto_msgTypes[1]
+	mi := &file_priceProtocol_priceServer_proto_msgTypes[1]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -120,7 +120,7 @@ func (x *GetPriceRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetPriceRequest.ProtoReflect.Descriptor instead.
 func (*GetPriceRequest) Descriptor() ([]byte, []int) {
-	return file_protocolPrice_serverPrice_proto_rawDescGZIP(), []int{1}
+	return file_priceProtocol_priceServer_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *GetPriceRequest) GetName() []string {
@@ -141,7 +141,7 @@ type GetPriceResponse struct {
 func (x *GetPriceResponse) Reset() {
 	*x = GetPriceResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_protocolPrice_serverPrice_proto_msgTypes[2]
+		mi := &file_priceProtocol_priceServer_proto_msgTypes[2]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -154,7 +154,7 @@ func (x *GetPriceResponse) String() string {
 func (*GetPriceResponse) ProtoMessage() {}
 
 func (x *GetPriceResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_protocolPrice_serverPrice_proto_msgTypes[2]
+	mi := &file_priceProtocol_priceServer_proto_msgTypes[2]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -167,7 +167,7 @@ func (x *GetPriceResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetPriceResponse.ProtoReflect.Descriptor instead.
 func (*GetPriceResponse) Descriptor() ([]byte, []int) {
-	return file_protocolPrice_serverPrice_proto_rawDescGZIP(), []int{2}
+	return file_priceProtocol_priceServer_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *GetPriceResponse) GetCurrency() *Currency {
@@ -177,12 +177,12 @@ func (x *GetPriceResponse) GetCurrency() *Currency {
 	return nil
 }
 
-var File_protocolPrice_serverPrice_proto protoreflect.FileDescriptor
+var File_priceProtocol_priceServer_proto protoreflect.FileDescriptor
 
-var file_protocolPrice_serverPrice_proto_rawDesc = []byte{
-	0x0a, 0x1f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x50, 0x72, 0x69, 0x63, 0x65, 0x2f,
-	0x73, 0x65, 0x72, 0x76, 0x65, 0x72, 0x50, 0x72, 0x69, 0x63, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74,
-	0x6f, 0x12, 0x0d, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x50, 0x72, 0x69, 0x63, 0x65,
+var file_priceProtocol_priceServer_proto_rawDesc = []byte{
+	0x0a, 0x1f, 0x70, 0x72, 0x69, 0x63, 0x65, 0x50, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2f,
+	0x70, 0x72, 0x69, 0x63, 0x65, 0x53, 0x65, 0x72, 0x76, 0x65, 0x72, 0x2e, 0x70, 0x72, 0x6f, 0x74,
+	0x6f, 0x12, 0x0d, 0x70, 0x72, 0x69, 0x63, 0x65, 0x50, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c,
 	0x22, 0x68, 0x0a, 0x08, 0x43, 0x75, 0x72, 0x72, 0x65, 0x6e, 0x63, 0x79, 0x12, 0x22, 0x0a, 0x0c,
 	0x63, 0x75, 0x72, 0x72, 0x65, 0x6e, 0x63, 0x79, 0x4e, 0x61, 0x6d, 0x65, 0x18, 0x01, 0x20, 0x01,
 	0x28, 0x09, 0x52, 0x0c, 0x63, 0x75, 0x72, 0x72, 0x65, 0x6e, 0x63, 0x79, 0x4e, 0x61, 0x6d, 0x65,
@@ -194,41 +194,41 @@ var file_protocolPrice_serverPrice_proto_rawDesc = []byte{
 	0x04, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x01, 0x20, 0x03, 0x28, 0x09, 0x52, 0x04, 0x6e, 0x61, 0x6d,
 	0x65, 0x22, 0x47, 0x0a, 0x10, 0x47, 0x65, 0x74, 0x50, 0x72, 0x69, 0x63, 0x65, 0x52, 0x65, 0x73,
 	0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x33, 0x0a, 0x08, 0x63, 0x75, 0x72, 0x72, 0x65, 0x6e, 0x63,
-	0x79, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x17, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63,
-	0x6f, 0x6c, 0x50, 0x72, 0x69, 0x63, 0x65, 0x2e, 0x43, 0x75, 0x72, 0x72, 0x65, 0x6e, 0x63, 0x79,
+	0x79, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x17, 0x2e, 0x70, 0x72, 0x69, 0x63, 0x65, 0x50,
+	0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x43, 0x75, 0x72, 0x72, 0x65, 0x6e, 0x63, 0x79,
 	0x52, 0x08, 0x63, 0x75, 0x72, 0x72, 0x65, 0x6e, 0x63, 0x79, 0x32, 0x62, 0x0a, 0x0f, 0x43, 0x75,
 	0x72, 0x72, 0x65, 0x6e, 0x63, 0x79, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x12, 0x4f, 0x0a,
-	0x08, 0x47, 0x65, 0x74, 0x50, 0x72, 0x69, 0x63, 0x65, 0x12, 0x1e, 0x2e, 0x70, 0x72, 0x6f, 0x74,
-	0x6f, 0x63, 0x6f, 0x6c, 0x50, 0x72, 0x69, 0x63, 0x65, 0x2e, 0x47, 0x65, 0x74, 0x50, 0x72, 0x69,
-	0x63, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x1f, 0x2e, 0x70, 0x72, 0x6f, 0x74,
-	0x6f, 0x63, 0x6f, 0x6c, 0x50, 0x72, 0x69, 0x63, 0x65, 0x2e, 0x47, 0x65, 0x74, 0x50, 0x72, 0x69,
+	0x08, 0x47, 0x65, 0x74, 0x50, 0x72, 0x69, 0x63, 0x65, 0x12, 0x1e, 0x2e, 0x70, 0x72, 0x69, 0x63,
+	0x65, 0x50, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x47, 0x65, 0x74, 0x50, 0x72, 0x69,
+	0x63, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x1f, 0x2e, 0x70, 0x72, 0x69, 0x63,
+	0x65, 0x50, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x47, 0x65, 0x74, 0x50, 0x72, 0x69,
 	0x63, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x30, 0x01, 0x42, 0x11,
-	0x5a, 0x0f, 0x2e, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x50, 0x72, 0x69, 0x63,
-	0x65, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x5a, 0x0f, 0x2e, 0x2f, 0x70, 0x72, 0x69, 0x63, 0x65, 0x50, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f,
+	0x6c, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
-	file_protocolPrice_serverPrice_proto_rawDescOnce sync.Once
-	file_protocolPrice_serverPrice_proto_rawDescData = file_protocolPrice_serverPrice_proto_rawDesc
+	file_priceProtocol_priceServer_proto_rawDescOnce sync.Once
+	file_priceProtocol_priceServer_proto_rawDescData = file_priceProtocol_priceServer_proto_rawDesc
 )
 
-func file_protocolPrice_serverPrice_proto_rawDescGZIP() []byte {
-	file_protocolPrice_serverPrice_proto_rawDescOnce.Do(func() {
-		file_protocolPrice_serverPrice_proto_rawDescData = protoimpl.X.CompressGZIP(file_protocolPrice_serverPrice_proto_rawDescData)
+func file_priceProtocol_priceServer_proto_rawDescGZIP() []byte {
+	file_priceProtocol_priceServer_proto_rawDescOnce.Do(func() {
+		file_priceProtocol_priceServer_proto_rawDescData = protoimpl.X.CompressGZIP(file_priceProtocol_priceServer_proto_rawDescData)
 	})
-	return file_protocolPrice_serverPrice_proto_rawDescData
+	return file_priceProtocol_priceServer_proto_rawDescData
 }
 
-var file_protocolPrice_serverPrice_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
-var file_protocolPrice_serverPrice_proto_goTypes = []interface{}{
-	(*Currency)(nil),         // 0: protocolPrice.Currency
-	(*GetPriceRequest)(nil),  // 1: protocolPrice.GetPriceRequest
-	(*GetPriceResponse)(nil), // 2: protocolPrice.GetPriceResponse
+var file_priceProtocol_priceServer_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
+var file_priceProtocol_priceServer_proto_goTypes = []interface{}{
+	(*Currency)(nil),         // 0: priceProtocol.Currency
+	(*GetPriceRequest)(nil),  // 1: priceProtocol.GetPriceRequest
+	(*GetPriceResponse)(nil), // 2: priceProtocol.GetPriceResponse
 }
-var file_protocolPrice_serverPrice_proto_depIdxs = []int32{
-	0, // 0: protocolPrice.GetPriceResponse.currency:type_name -> protocolPrice.Currency
-	1, // 1: protocolPrice.CurrencyService.GetPrice:input_type -> protocolPrice.GetPriceRequest
-	2, // 2: protocolPrice.CurrencyService.GetPrice:output_type -> protocolPrice.GetPriceResponse
+var file_priceProtocol_priceServer_proto_depIdxs = []int32{
+	0, // 0: priceProtocol.GetPriceResponse.currency:type_name -> priceProtocol.Currency
+	1, // 1: priceProtocol.CurrencyService.GetPrice:input_type -> priceProtocol.GetPriceRequest
+	2, // 2: priceProtocol.CurrencyService.GetPrice:output_type -> priceProtocol.GetPriceResponse
 	2, // [2:3] is the sub-list for method output_type
 	1, // [1:2] is the sub-list for method input_type
 	1, // [1:1] is the sub-list for extension type_name
@@ -236,13 +236,13 @@ var file_protocolPrice_serverPrice_proto_depIdxs = []int32{
 	0, // [0:1] is the sub-list for field type_name
 }
 
-func init() { file_protocolPrice_serverPrice_proto_init() }
-func file_protocolPrice_serverPrice_proto_init() {
-	if File_protocolPrice_serverPrice_proto != nil {
+func init() { file_priceProtocol_priceServer_proto_init() }
+func file_priceProtocol_priceServer_proto_init() {
+	if File_priceProtocol_priceServer_proto != nil {
 		return
 	}
 	if !protoimpl.UnsafeEnabled {
-		file_protocolPrice_serverPrice_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
+		file_priceProtocol_priceServer_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*Currency); i {
 			case 0:
 				return &v.state
@@ -254,7 +254,7 @@ func file_protocolPrice_serverPrice_proto_init() {
 				return nil
 			}
 		}
-		file_protocolPrice_serverPrice_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
+		file_priceProtocol_priceServer_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetPriceRequest); i {
 			case 0:
 				return &v.state
@@ -266,7 +266,7 @@ func file_protocolPrice_serverPrice_proto_init() {
 				return nil
 			}
 		}
-		file_protocolPrice_serverPrice_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
+		file_priceProtocol_priceServer_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetPriceResponse); i {
 			case 0:
 				return &v.state
@@ -283,18 +283,18 @@ func file_protocolPrice_serverPrice_proto_init() {
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: file_protocolPrice_serverPrice_proto_rawDesc,
+			RawDescriptor: file_priceProtocol_priceServer_proto_rawDesc,
 			NumEnums:      0,
 			NumMessages:   3,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
-		GoTypes:           file_protocolPrice_serverPrice_proto_goTypes,
-		DependencyIndexes: file_protocolPrice_serverPrice_proto_depIdxs,
-		MessageInfos:      file_protocolPrice_serverPrice_proto_msgTypes,
+		GoTypes:           file_priceProtocol_priceServer_proto_goTypes,
+		DependencyIndexes: file_priceProtocol_priceServer_proto_depIdxs,
+		MessageInfos:      file_priceProtocol_priceServer_proto_msgTypes,
 	}.Build()
-	File_protocolPrice_serverPrice_proto = out.File
-	file_protocolPrice_serverPrice_proto_rawDesc = nil
-	file_protocolPrice_serverPrice_proto_goTypes = nil
-	file_protocolPrice_serverPrice_proto_depIdxs = nil
+	File_priceProtocol_priceServer_proto = out.File
+	file_priceProtocol_priceServer_proto_rawDesc = nil
+	file_priceProtocol_priceServer_proto_goTypes = nil
+	file_priceProtocol_priceServer_proto_depIdxs = nil
 }

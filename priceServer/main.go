@@ -2,6 +2,9 @@ package main
 
 import (
 	"fmt"
+	"net"
+	"os"
+	"sync"
 
 	"github.com/AndiVS/broker-api/priceServer/internal/consumer"
 	"github.com/AndiVS/broker-api/priceServer/internal/server"
@@ -11,10 +14,6 @@ import (
 	"github.com/google/uuid"
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
-
-	"net"
-	"os"
-	"sync"
 )
 
 func main() {

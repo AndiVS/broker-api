@@ -2,14 +2,13 @@ package main
 
 import (
 	"fmt"
+	"math/rand"
+	"os"
+	"time"
 
 	"github.com/AndiVS/broker-api/priceServer/model"
 	"github.com/go-redis/redis/v7"
 	log "github.com/sirupsen/logrus"
-
-	"math/rand"
-	"os"
-	"time"
 )
 
 const timeFormat = "2006-01-02 15:04:05.000000000"

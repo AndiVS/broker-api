@@ -2,12 +2,12 @@
 package consumer
 
 import (
+	"sync"
+
 	"github.com/AndiVS/broker-api/priceServer/model"
 	"github.com/go-redis/redis/v7"
 	"github.com/google/uuid"
 	log "github.com/sirupsen/logrus"
-
-	"sync"
 )
 
 // RedisStream for grpc

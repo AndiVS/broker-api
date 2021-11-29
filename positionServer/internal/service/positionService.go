@@ -3,6 +3,7 @@ package service
 
 import (
 	"context"
+
 	"github.com/AndiVS/broker-api/positionServer/internal/model"
 	"github.com/AndiVS/broker-api/positionServer/internal/repository"
 	"github.com/google/uuid"
