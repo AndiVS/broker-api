@@ -44,9 +44,9 @@ func main() {
 
 	currencyMap := map[string]*model.Currency{}
 	positionMap := map[string]map[uuid.UUID]*chan *model.Currency{
-		"BTC": map[uuid.UUID]*chan *model.Currency{},
-		"ETH": map[uuid.UUID]*chan *model.Currency{},
-		"YFI": map[uuid.UUID]*chan *model.Currency{},
+		"BTC": {},
+		"ETH": {},
+		"YFI": {},
 	}
 
 	go listen(pool, &positionMap)
