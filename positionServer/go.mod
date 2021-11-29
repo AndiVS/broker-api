@@ -3,7 +3,7 @@ module github.com/AndiVS/broker-api/positionServer
 go 1.17
 
 require (
-	github.com/AndiVS/broker-api/priceServer v0.0.0-20211126124928-2db798cb416c
+	github.com/AndiVS/broker-api/priceServer v0.0.0-20211129162640-850f36ff147a
 	github.com/caarlos0/env/v6 v6.7.2
 	github.com/google/uuid v1.3.0
 	github.com/jackc/pgx/v4 v4.13.0
