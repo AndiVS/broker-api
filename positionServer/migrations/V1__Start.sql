@@ -42,9 +42,9 @@ declare
     channel text := TG_ARGV[0];
 begin
     PERFORM (
-        with resp(event, position_id, currency_name, amount, close_price, close_time) as
+        with resp(event, position_id, currency_name, amount, open_price, close_price, close_time) as
                  (
-                     select TG_OP, NEW.position_id, NEW.currency_name, NEW.amount, NEW.close_price, NEW.close_time
+                     select TG_OP, NEW.position_id, NEW.currency_name, NEW.amount, NEW.open_price, NEW.close_price, NEW.close_time
                  )
         select pg_notify(channel, row_to_json(resp)::text)
         from resp

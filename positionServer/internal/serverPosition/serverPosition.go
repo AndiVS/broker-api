@@ -16,13 +16,12 @@ type PositionServer struct {
 	Service     service.Positions
 	mu          *sync.Mutex
 	currencyMap *map[string]*model.Currency
-	positionMap *map[string]map[uuid.UUID]*modelLokal.Position
 	*protocolPosition.UnimplementedPositionServiceServer
 }
 
 // NewPositionServer constructor
-func NewPositionServer(Service service.Positions, mu *sync.Mutex, currencyMap *map[string]*model.Currency, positionMap *map[string]map[uuid.UUID]*modelLokal.Position) *PositionServer {
-	return &PositionServer{Service: Service, mu: mu, currencyMap: currencyMap, positionMap: positionMap}
+func NewPositionServer(Service service.Positions, mu *sync.Mutex, currencyMap *map[string]*model.Currency) *PositionServer {
+	return &PositionServer{Service: Service, mu: mu, currencyMap: currencyMap}
 }
 
 // OpenPosition add transaction
@@ -35,7 +34,6 @@ func (t *PositionServer) OpenPosition(ctx context.Context, in *protocolPosition.
 		if err != nil {
 			return nil, err
 		}
-		(*t.positionMap)[in.CurrencyName][id1] = &position
 		return &protocolPosition.OpenResponse{PositionID: id.String()}, nil
 	}
 	return nil, nil //"price changed current price"
