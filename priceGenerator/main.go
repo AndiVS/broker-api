@@ -2,9 +2,11 @@ package main
 
 import (
 	"fmt"
+
 	"github.com/AndiVS/broker-api/priceServer/model"
 	"github.com/go-redis/redis/v7"
 	log "github.com/sirupsen/logrus"
+
 	"math/rand"
 	"os"
 	"time"
@@ -31,7 +33,6 @@ func main() {
 
 func connectToRedis() *redis.Client {
 	adr := fmt.Sprintf("%s%s", os.Getenv("REDIS_HOST"), os.Getenv("REDIS_PORT"))
-	//adr := fmt.Sprintf("%s:%s", "172.28.1.1", "6379")
 	client := redis.NewClient(&redis.Options{
 		Addr:     adr,
 		Password: "",
@@ -55,7 +56,6 @@ func generatePrice(currMap map[string]interface{}) {
 }
 
 func generateCurrencyMap() map[string]interface{} {
-	//currMap := make(map[string]*priceProtocol.Currency)
 	currMap := make(map[string]interface{})
 
 	currMap["BTC"] = &model.Currency{
@@ -73,21 +73,5 @@ func generateCurrencyMap() map[string]interface{} {
 		CurrencyPrice: 30000.000,
 		Time:          time.Now().Format(timeFormat),
 	}
-	/*		currMap["BTC2"] = &priceProtocol.Currency{
-				CurrencyName:  "BTC2",
-				CurrencyPrice: 55555.555,
-				Time:          time.Now().Format(timeFormat),
-			}
-			currMap["BTC3"] = &priceProtocol.Currency{
-				CurrencyName:  "BTC3",
-				CurrencyPrice: 55555.555,
-				Time:          time.Now().Format(timeFormat),
-			}
-			currMap["BTC4"] = &priceProtocol.Currency{
-				CurrencyName:  "BTC4",
-				CurrencyPrice: 55555.555,
-				Time:          time.Now().Format(timeFormat),
-			}*/
-
 	return currMap
 }

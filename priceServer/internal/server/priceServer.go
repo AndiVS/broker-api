@@ -5,6 +5,7 @@ import (
 	"github.com/AndiVS/broker-api/priceServer/model"
 	"github.com/AndiVS/broker-api/priceServer/priceProtocol"
 	"github.com/google/uuid"
+
 	"sync"
 )
 
@@ -37,7 +38,7 @@ func (s *GRCPServer) GetPrice(request *priceProtocol.GetPriceRequest, stream pri
 		err := stream.Send(&priceProtocol.GetPriceResponse{Currency: &pcur})
 		if err != nil {
 			for _, v := range request.Name {
-				//<-s.subscribersMap[v][id]
+				// <-s.subscribersMap[v][id]
 				<-ac
 				delete(s.subscribersMap[v], id)
 			}

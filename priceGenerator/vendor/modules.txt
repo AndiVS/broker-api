@@ -1,4 +1,4 @@
-# github.com/AndiVS/broker-api/priceServer v0.0.0-20211126124928-2db798cb416c
+# github.com/AndiVS/broker-api/priceServer v0.0.0-20211129160114-afb6d0ce807d
 ## explicit; go 1.17
 github.com/AndiVS/broker-api/priceServer/model
 # github.com/fsnotify/fsnotify v1.4.9

@@ -1,4 +1,4 @@
-// Package repository
+// Package repository for working with postgres
 package repository
 
 import (
@@ -23,6 +23,7 @@ type Postgres struct {
 	Pool *pgxpool.Pool
 }
 
+// NewRepository constructor
 func NewRepository(pool *pgxpool.Pool) Positions {
 	return &Postgres{Pool: pool}
 }
@@ -48,6 +49,7 @@ func (repos *Postgres) OpenPosition(c context.Context, position *model.Position)
 	return &position.PositionID, err
 }
 
+// ClosePosition function for updating item into table
 func (repos *Postgres) ClosePosition(c context.Context, id *uuid.UUID, closePrice *float32) error {
 	v, err := repos.Pool.Exec(c,
 		"UPDATE positions SET close_price = $2, close_time = $3 WHERE position_id = $1",

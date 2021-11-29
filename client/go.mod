@@ -3,8 +3,8 @@ module github.com/AndiVS/broker-api/client
 go 1.17
 
 require (
-	github.com/AndiVS/broker-api/positionServer v0.0.0-20211129084741-6542ba375e4c
-	github.com/AndiVS/broker-api/priceServer v0.0.0-20211126124928-2db798cb416c
+	github.com/AndiVS/broker-api/positionServer latest
+	github.com/AndiVS/broker-api/priceServer latest
 	google.golang.org/grpc v1.42.0
 )
 

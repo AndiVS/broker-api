@@ -1,4 +1,4 @@
-// Package service
+// Package service for work with repository
 package service
 
 import (
