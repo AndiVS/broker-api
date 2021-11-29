@@ -3,6 +3,7 @@ package serverPosition
 
 import (
 	"context"
+	modelLokal "github.com/AndiVS/broker-api/positionServer/internal/model"
 	"github.com/AndiVS/broker-api/positionServer/internal/service"
 	"github.com/AndiVS/broker-api/positionServer/protocolPosition"
 	"github.com/AndiVS/broker-api/priceServer/model"
@@ -14,22 +15,27 @@ import (
 type PositionServer struct {
 	Service     service.Positions
 	mu          *sync.Mutex
-	currencyMap map[string]*model.Currency
+	currencyMap *map[string]*model.Currency
+	positionMap *map[string]map[uuid.UUID]*modelLokal.Position
 	*protocolPosition.UnimplementedPositionServiceServer
 }
 
 // NewPositionServer constructor
-func NewPositionServer(Service service.Positions, mu *sync.Mutex, currencyMap map[string]*model.Currency) *PositionServer {
-	return &PositionServer{Service: Service, mu: mu, currencyMap: currencyMap}
+func NewPositionServer(Service service.Positions, mu *sync.Mutex, currencyMap *map[string]*model.Currency, positionMap *map[string]map[uuid.UUID]*modelLokal.Position) *PositionServer {
+	return &PositionServer{Service: Service, mu: mu, currencyMap: currencyMap, positionMap: positionMap}
 }
 
 // OpenPosition add transaction
 func (t *PositionServer) OpenPosition(ctx context.Context, in *protocolPosition.OpenRequest) (*protocolPosition.OpenResponse, error) {
-	if in.Price == t.currencyMap[in.CurrencyName].CurrencyPrice {
-		id, err := t.Service.OpenPosition(ctx, in.CurrencyName, t.currencyMap[in.CurrencyName].Time, in.CurrencyAmount, t.currencyMap[in.CurrencyName].CurrencyPrice)
+	if in.Price == (*t.currencyMap)[in.CurrencyName].CurrencyPrice {
+		id1 := uuid.New()
+		position := modelLokal.Position{PositionID: id1, CurrencyName: in.CurrencyName, Amount: in.CurrencyAmount,
+			OpenPrice: (*t.currencyMap)[in.CurrencyName].CurrencyPrice, OpenTime: (*t.currencyMap)[in.CurrencyName].Time}
+		id, err := t.Service.OpenPosition(ctx, position)
 		if err != nil {
 			return nil, err
 		}
+		(*t.positionMap)[in.CurrencyName][id1] = &position
 		return &protocolPosition.OpenResponse{PositionID: id.String()}, nil
 	}
 	return nil, nil //"price changed current price"
@@ -39,8 +45,11 @@ func (t *PositionServer) OpenPosition(ctx context.Context, in *protocolPosition.
 func (t *PositionServer) ClosePosition(ctx context.Context, in *protocolPosition.CloseRequest) (*protocolPosition.CloseResponse, error) {
 	id, err := uuid.Parse(in.PositionID)
 	if err != nil {
-		return &protocolPosition.CloseResponse{Error: err.Error()}, nil
+		return &protocolPosition.CloseResponse{}, err
 	}
-	err = t.Service.ClosePosition(ctx, id, t.currencyMap[in.CurrencyName].CurrencyPrice)
+	err = t.Service.ClosePosition(ctx, id, (*t.currencyMap)[in.CurrencyName].CurrencyPrice)
+	if err != nil {
+		return &protocolPosition.CloseResponse{}, err
+	}
 	return &protocolPosition.CloseResponse{}, nil
 }

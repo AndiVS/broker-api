@@ -16,9 +16,9 @@ declare
 channel text := TG_ARGV[0];
 begin
   PERFORM (
-     with resp(position_id, currency_name, amount, open_price, open_time) as
+     with resp(event, position_id, currency_name, amount, open_price, open_time) as
      (
-       select NEW.position_id, NEW.currency_name, NEW.amount, NEW.open_price, NEW.open_time
+       select TG_OP, NEW.position_id, NEW.currency_name, NEW.amount, NEW.open_price, NEW.open_time
      )
      select pg_notify(channel, row_to_json(resp)::text)
        from resp
@@ -34,7 +34,7 @@ CREATE TRIGGER open_position
     EXECUTE PROCEDURE insert_notify('positions');
 
 
-/*create or replace function update_notify()
+create or replace function update_notify()
     returns trigger
     language plpgsql
 as $$
@@ -42,9 +42,9 @@ declare
     channel text := TG_ARGV[0];
 begin
     PERFORM (
-        with resp(positions_id, currency_name, amount, open_price, open_time) as
+        with resp(event, position_id, currency_name, amount, close_price, close_time) as
                  (
-                     select NEW.positions_id, NEW.currency_name, NEW.amount, NEW.open_price, NEW.open_time
+                     select TG_OP, NEW.position_id, NEW.currency_name, NEW.amount, NEW.close_price, NEW.close_time
                  )
         select pg_notify(channel, row_to_json(resp)::text)
         from resp
@@ -54,8 +54,7 @@ end;
 $$;
 
 CREATE TRIGGER close_position
-    AFTER DELETE
+    AFTER update
     ON positions
     FOR EACH ROW
     EXECUTE PROCEDURE update_notify('positions');
-*/

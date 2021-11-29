@@ -4,12 +4,14 @@ import (
 	"context"
 	"fmt"
 	"github.com/AndiVS/broker-api/positionServer/internal/config"
+	modelLokal "github.com/AndiVS/broker-api/positionServer/internal/model"
 	"github.com/AndiVS/broker-api/positionServer/internal/repository"
 	"github.com/AndiVS/broker-api/positionServer/internal/serverPosition"
 	"github.com/AndiVS/broker-api/positionServer/internal/service"
 	"github.com/AndiVS/broker-api/positionServer/protocolPosition"
 	"github.com/AndiVS/broker-api/priceServer/model"
 	"github.com/AndiVS/broker-api/priceServer/protocolPrice"
+	"github.com/google/uuid"
 	"github.com/jackc/pgx/v4/pgxpool"
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
@@ -35,21 +37,26 @@ func main() {
 
 	pool := getPostgres(cfg.DBURL)
 
-	go listen(pool)
-
 	recordRepository := repository.NewRepository(pool)
 
 	log.Infof("Connected!")
 
 	currencyMap := map[string]*model.Currency{}
+	positionMap := map[string]map[uuid.UUID]*modelLokal.Position{
+		"BTC": map[uuid.UUID]*modelLokal.Position{},
+		"ETH": map[uuid.UUID]*modelLokal.Position{},
+		"YFI": map[uuid.UUID]*modelLokal.Position{},
+	}
+
+	go listen(pool, &positionMap)
 
 	mute := new(sync.Mutex)
 	connectionBuffer := connectToPriceServer()
 	subList := []string{"BTC", "ETH"}
-	go getPrices(subList, connectionBuffer, mute, currencyMap)
+	go getPrices(subList, connectionBuffer, mute, &currencyMap, &positionMap)
 
 	transactionService := service.NewPositionService(recordRepository)
-	transactionServer := serverPosition.NewPositionServer(transactionService, mute, currencyMap)
+	transactionServer := serverPosition.NewPositionServer(transactionService, mute, &currencyMap, &positionMap)
 
 	err = runGRPCServer(transactionServer)
 	if err != nil {
@@ -89,7 +96,7 @@ func getPostgres(url string) *pgxpool.Pool {
 	return pool
 }
 
-func listen(pool *pgxpool.Pool) {
+func listen(pool *pgxpool.Pool, positionMap *map[string]map[uuid.UUID]*modelLokal.Position) {
 	conn, err := pool.Acquire(context.Background())
 	if err != nil {
 		log.Println("Error acquiring connection:", err)
@@ -107,7 +114,23 @@ func listen(pool *pgxpool.Pool) {
 			log.Println("Error waiting for notification:", err)
 		}
 
-		log.Println("PID:", notification.PID, "Channel:", notification.Channel, "Payload:", notification.Payload)
+		//log.Println("PID:", notification.PID, "Channel:", notification.Channel, "Payload:", notification.Payload)
+
+		pos := modelLokal.Position{}
+		err = pos.UnmarshalBinary([]byte(notification.Payload))
+		if err != nil {
+			log.Println("Error waiting for notification:", err)
+		}
+		switch pos.Event {
+		case "INSERT":
+			log.Printf("Open position with id %v currency name %v open price %v open time %v", pos.PositionID, pos.CurrencyName, pos.OpenPrice, pos.OpenTime)
+			(*positionMap)[pos.CurrencyName][pos.PositionID] = &pos
+		case "UPDATE":
+			profit := (pos.ClosePrice - (*positionMap)[pos.CurrencyName][pos.PositionID].OpenPrice) * float32(pos.Amount)
+			log.Printf("Position id %v close with profit %v", pos.PositionID.String(), profit)
+			delete((*positionMap)[pos.CurrencyName], pos.PositionID)
+		}
+
 	}
 }
 
@@ -141,7 +164,8 @@ func connectToPriceServer() protocolPrice.CurrencyServiceClient {
 	return protocolPrice.NewCurrencyServiceClient(con)
 }
 
-func getPrices(CurrencyName []string, client protocolPrice.CurrencyServiceClient, mu *sync.Mutex, currencyMap map[string]*model.Currency) {
+func getPrices(CurrencyName []string, client protocolPrice.CurrencyServiceClient, mu *sync.Mutex,
+	currencyMap *map[string]*model.Currency, positionMap *map[string]map[uuid.UUID]*modelLokal.Position) {
 	req := protocolPrice.GetPriceRequest{Name: CurrencyName}
 	stream, err := client.GetPrice(context.Background(), &req)
 	if err != nil {
@@ -158,10 +182,20 @@ func getPrices(CurrencyName []string, client protocolPrice.CurrencyServiceClient
 
 		cur := model.Currency{CurrencyName: in.Currency.CurrencyName, CurrencyPrice: in.Currency.CurrencyPrice, Time: in.Currency.Time}
 		mu.Lock()
-		currencyMap[cur.CurrencyName] = &cur
+		(*currencyMap)[cur.CurrencyName] = &cur
+		evaluateProfit(&cur, positionMap)
 		mu.Unlock()
+		/*log.Printf("Got currency data Name: %v Price: %v at time %v",
+		in.Currency.CurrencyName, in.Currency.CurrencyPrice, in.Currency.Time)*/
+	}
+}
 
-		log.Printf("Got currency data Name: %v Price: %v at time %v",
-			in.Currency.CurrencyName, in.Currency.CurrencyPrice, in.Currency.Time)
+func evaluateProfit(cur *model.Currency, positionMap *map[string]map[uuid.UUID]*modelLokal.Position) {
+
+	for i, v := range (*positionMap)[cur.CurrencyName] {
+		profit := (cur.CurrencyPrice - v.OpenPrice) * float32(v.Amount)
+		log.Printf("For position %v, profit %v at time %v   (open price: %v current price %v ammount %v)",
+			i, profit, cur.Time, v.OpenPrice, cur.CurrencyPrice, v.Amount)
+
 	}
 }

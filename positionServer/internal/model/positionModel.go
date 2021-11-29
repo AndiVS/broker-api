@@ -2,6 +2,7 @@
 package model
 
 import (
+	"encoding/json"
 	"github.com/google/uuid"
 )
 
@@ -15,4 +16,15 @@ type Position struct {
 	OpenTime     string    `param:"open_time" query:"open_time" header:"open_time" form:"open_time" bson:"open_time" msg:"open_time" json:"open_time"`
 	ClosePrice   float32   `param:"close_price" query:"close_price" header:"close_price" form:"close_price" bson:"close_price" msg:"close_price" json:"close_price"`
 	CloseTime    string    `param:"close_time" query:"close_time" header:"close_time" form:"close_time" bson:"close_time" msg:"close_time" json:"close_time"`
+	Event        string    `json:"event"`
+}
+
+// MarshalBinary Marshal currency to byte
+func (p *Position) MarshalBinary() ([]byte, error) {
+	return json.Marshal(p)
+}
+
+// UnmarshalBinary Marshal currency to byte
+func (p *Position) UnmarshalBinary(data []byte) error {
+	return json.Unmarshal(data, p)
 }
