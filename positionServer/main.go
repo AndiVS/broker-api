@@ -5,12 +5,12 @@ import (
 	"fmt"
 	"github.com/AndiVS/broker-api/positionServer/internal/config"
 	modelLokal "github.com/AndiVS/broker-api/positionServer/internal/model"
-	"github.com/AndiVS/broker-api/positionServer/internal/positionserver"
+	positionserver "github.com/AndiVS/broker-api/positionServer/internal/positionServer"
 	"github.com/AndiVS/broker-api/positionServer/internal/repository"
 	"github.com/AndiVS/broker-api/positionServer/internal/service"
 	"github.com/AndiVS/broker-api/positionServer/positionProtocol"
 	"github.com/AndiVS/broker-api/priceServer/model"
-	"github.com/AndiVS/broker-api/priceServer/protocolPrice"
+	"github.com/AndiVS/broker-api/priceServer/priceProtocol"
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v4/pgxpool"
 	log "github.com/sirupsen/logrus"
@@ -156,7 +156,7 @@ func runGRPCServer(recServer positionProtocol.PositionServiceServer) error {
 	return grpcServer.Serve(listener)
 }
 
-func connectToPriceServer() protocolPrice.CurrencyServiceClient {
+func connectToPriceServer() priceProtocol.CurrencyServiceClient {
 	addressGrcp := fmt.Sprintf("%s%s", os.Getenv("GRPC_BUFFER_HOST"), os.Getenv("GRPC_BUFFER_PORT"))
 	//addressGrcp := "172.28.1.9:8081"
 
@@ -165,12 +165,12 @@ func connectToPriceServer() protocolPrice.CurrencyServiceClient {
 		log.Fatal("cannot dial server: ", err)
 	}
 
-	return protocolPrice.NewCurrencyServiceClient(con)
+	return priceProtocol.NewCurrencyServiceClient(con)
 }
 
-func getPrices(CurrencyName []string, client protocolPrice.CurrencyServiceClient, mu *sync.Mutex,
+func getPrices(CurrencyName []string, client priceProtocol.CurrencyServiceClient, mu *sync.Mutex,
 	currencyMap *map[string]*model.Currency, positionMap *map[string]map[uuid.UUID]*chan *model.Currency) {
-	req := protocolPrice.GetPriceRequest{Name: CurrencyName}
+	req := priceProtocol.GetPriceRequest{Name: CurrencyName}
 	stream, err := client.GetPrice(context.Background(), &req)
 	if err != nil {
 		log.Fatalf("%v.RouteChat(_) = _, %v", client, err)
