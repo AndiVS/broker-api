@@ -1,5 +1,5 @@
-// Package serverPosition
-package serverPosition
+// Package positionServer
+package positionServer
 
 import (
 	"context"
@@ -30,7 +30,7 @@ func (t *PositionServer) OpenPosition(ctx context.Context, in *protocolPosition.
 		id1 := uuid.New()
 		position := modelLokal.Position{PositionID: id1, CurrencyName: in.CurrencyName, Amount: in.CurrencyAmount,
 			OpenPrice: (*t.currencyMap)[in.CurrencyName].CurrencyPrice, OpenTime: (*t.currencyMap)[in.CurrencyName].Time}
-		id, err := t.Service.OpenPosition(ctx, position)
+		id, err := t.Service.OpenPosition(ctx, &position)
 		if err != nil {
 			return nil, err
 		}

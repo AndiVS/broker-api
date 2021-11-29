@@ -1,7 +1,7 @@
 syntax = "proto3";
 
-option go_package = "./protocolPrice";
-package protocolPrice;
+option go_package = "./priceProtocol";
+package priceProtocol;
 
 message Currency {
   string  currencyName  = 1;

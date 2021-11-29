@@ -10,7 +10,7 @@ import (
 
 // Positions interface for transactionService
 type Positions interface {
-	OpenPosition(c context.Context, position model.Position) (*uuid.UUID, error)
+	OpenPosition(c context.Context, position *model.Position) (*uuid.UUID, error)
 	ClosePosition(c context.Context, id uuid.UUID, price float32) error
 }
 
@@ -25,8 +25,8 @@ func NewPositionService(Rep interface{}) Positions {
 }
 
 // OpenPosition add record about position
-func (s *PositionsService) OpenPosition(c context.Context, position model.Position) (*uuid.UUID, error) {
-	return s.Rep.OpenPosition(c, &position)
+func (s *PositionsService) OpenPosition(c context.Context, position *model.Position) (*uuid.UUID, error) {
+	return s.Rep.OpenPosition(c, position)
 }
 
 // ClosePosition add record about position
