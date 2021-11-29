@@ -1,5 +1,5 @@
-// Package positionserver for work with grcp
-package positionserver
+// Package server for work with grcp
+package server
 
 import (
 	"context"
