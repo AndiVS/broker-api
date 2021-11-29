@@ -56,14 +56,20 @@ func main() {
 
 	//unsubscribeFromCurrency("ETH",subMap)
 	time.Sleep(5 * time.Second)
-	//posServ.OpenPosition("BTC", 64)
-	posServ.ClosePosition("87236c7f-69b9-46e5-b37c-693830280305", "BTC")
+
+	posServ.OpenPosition("BTC", 64)
+	id := posServ.OpenPosition("BTC", 64)
+
+	time.Sleep(5 * time.Second)
+
+	posServ.ClosePosition(id, "BTC")
 
 }
 
 func (s *PositionServer) connectToPositionServer() {
 	//addressGRPC := os.Getenv("GRPC_BROKER_ADDRESS")
-	addressGrcp := "localhost:8080"
+	//addressGrcp := "localhost:8080"
+	addressGrcp := "172.28.1.8:8083"
 	con, err := grpc.Dial(addressGrcp, grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
 		log.Fatal("cannot dial server: ", err)
@@ -84,24 +90,26 @@ func (s *PriceServer) connectToPriceServer() {
 	s.connection = protocolPrice.NewCurrencyServiceClient(con)
 }
 
-func (s *PositionServer) OpenPosition(currency string, amount int64) {
+func (s *PositionServer) OpenPosition(currency string, amount int64) string {
 	open, err := s.connection.OpenPosition(context.Background(), &protocolPosition.OpenRequest{CurrencyName: currency, CurrencyAmount: amount, Price: (*s.currencyMap)[currency].CurrencyPrice})
 	if err != nil {
-		log.Panicf("Error while opening position: %v", err)
+		log.Printf("Error while opening position: %v", err)
 	}
 	s.positionMap[currency][open.GetPositionID()] = false
 	log.Printf("Position open with id: %s", open.GetPositionID())
+	return open.GetPositionID()
 }
 
 func (s *PositionServer) ClosePosition(id string, currency string) {
 
 	_, err := s.connection.ClosePosition(context.Background(), &protocolPosition.CloseRequest{PositionID: id, CurrencyName: currency})
 	if err != nil {
-		log.Panicf("Error while closing position: %v", err)
+		log.Printf("Error while closing position: %v", err)
+	} else {
+		s.positionMap[currency][id] = true
+		log.Printf("Position with id: %s closed", id)
 	}
 
-	s.positionMap[currency][id] = true
-	log.Printf("Position with id: %s closed", id)
 }
 
 func (s *PriceServer) subscribeToCurrency() {

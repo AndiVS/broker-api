@@ -49,10 +49,14 @@ func (repos *Postgres) OpenPosition(c context.Context, position *model.Position)
 }
 
 func (repos *Postgres) ClosePosition(c context.Context, id *uuid.UUID, closePrice *float32) error {
-	_, err := repos.Pool.Exec(c,
+	v, err := repos.Pool.Exec(c,
 		"UPDATE positions SET close_price = $2, close_time = $3 WHERE position_id = $1",
 		id, closePrice, time.Now().Format(timeFormat))
 
+	if v.RowsAffected() == 0 {
+		log.Errorf("Now sach row %v", ErrNotFound)
+		return ErrNotFound
+	}
 	if err != nil {
 		log.Errorf("Failed updating data in db: %s\n", err)
 		return err
