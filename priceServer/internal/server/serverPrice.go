@@ -36,11 +36,10 @@ func (s *GRCPServer) GetPrice(request *protocolPrice.GetPriceRequest, stream pro
 		pcur := protocolPrice.Currency{CurrencyName: cur.CurrencyName, CurrencyPrice: cur.CurrencyPrice, Time: cur.Time}
 		err := stream.Send(&protocolPrice.GetPriceResponse{Currency: &pcur})
 		if err != nil {
-			<-ac
 			for _, v := range request.Name {
-				s.mu.Lock()
+				//<-s.subscribersMap[v][id]
+				<-ac
 				delete(s.subscribersMap[v], id)
-				s.mu.Unlock()
 			}
 			return err
 		}

@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS positions (
-    positions_id UUID PRIMARY KEY,
+    position_id UUID PRIMARY KEY,
     currency_name VARCHAR(64),
     amount INTEGER,
     open_price   FLOAT,
@@ -16,9 +16,9 @@ declare
 channel text := TG_ARGV[0];
 begin
   PERFORM (
-     with resp(positions_id, currency_name, amount, open_price, open_time) as
+     with resp(position_id, currency_name, amount, open_price, open_time) as
      (
-       select NEW.positions_id, NEW.currency_name, NEW.amount, NEW.open_price, NEW.open_time
+       select NEW.position_id, NEW.currency_name, NEW.amount, NEW.open_price, NEW.open_time
      )
      select pg_notify(channel, row_to_json(resp)::text)
        from resp

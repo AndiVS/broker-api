@@ -32,7 +32,7 @@ func NewPositionServiceClient(cc grpc.ClientConnInterface) PositionServiceClient
 
 func (c *positionServiceClient) OpenPosition(ctx context.Context, in *OpenRequest, opts ...grpc.CallOption) (*OpenResponse, error) {
 	out := new(OpenResponse)
-	err := c.cc.Invoke(ctx, "/protocolBroker.PositionService/OpenPosition", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/protocolPosition.PositionService/OpenPosition", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -41,7 +41,7 @@ func (c *positionServiceClient) OpenPosition(ctx context.Context, in *OpenReques
 
 func (c *positionServiceClient) ClosePosition(ctx context.Context, in *CloseRequest, opts ...grpc.CallOption) (*CloseResponse, error) {
 	out := new(CloseResponse)
-	err := c.cc.Invoke(ctx, "/protocolBroker.PositionService/ClosePosition", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/protocolPosition.PositionService/ClosePosition", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -90,7 +90,7 @@ func _PositionService_OpenPosition_Handler(srv interface{}, ctx context.Context,
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/protocolBroker.PositionService/OpenPosition",
+		FullMethod: "/protocolPosition.PositionService/OpenPosition",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(PositionServiceServer).OpenPosition(ctx, req.(*OpenRequest))
@@ -108,7 +108,7 @@ func _PositionService_ClosePosition_Handler(srv interface{}, ctx context.Context
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/protocolBroker.PositionService/ClosePosition",
+		FullMethod: "/protocolPosition.PositionService/ClosePosition",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(PositionServiceServer).ClosePosition(ctx, req.(*CloseRequest))
@@ -120,7 +120,7 @@ func _PositionService_ClosePosition_Handler(srv interface{}, ctx context.Context
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var PositionService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "protocolBroker.PositionService",
+	ServiceName: "protocolPosition.PositionService",
 	HandlerType: (*PositionServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
