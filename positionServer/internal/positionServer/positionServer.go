@@ -1,11 +1,11 @@
-// Package positionServer
-package positionServer
+// Package positionserver for work with grcp
+package positionserver
 
 import (
 	"context"
 	modelLokal "github.com/AndiVS/broker-api/positionServer/internal/model"
 	"github.com/AndiVS/broker-api/positionServer/internal/service"
-	"github.com/AndiVS/broker-api/positionServer/protocolPosition"
+	"github.com/AndiVS/broker-api/positionServer/positionProtocol"
 	"github.com/AndiVS/broker-api/priceServer/model"
 	"github.com/google/uuid"
 	"sync"
@@ -16,7 +16,7 @@ type PositionServer struct {
 	Service     service.Positions
 	mu          *sync.Mutex
 	currencyMap *map[string]*model.Currency
-	*protocolPosition.UnimplementedPositionServiceServer
+	*positionProtocol.UnimplementedPositionServiceServer
 }
 
 // NewPositionServer constructor
@@ -25,7 +25,7 @@ func NewPositionServer(Service service.Positions, mu *sync.Mutex, currencyMap *m
 }
 
 // OpenPosition add transaction
-func (t *PositionServer) OpenPosition(ctx context.Context, in *protocolPosition.OpenRequest) (*protocolPosition.OpenResponse, error) {
+func (t *PositionServer) OpenPosition(ctx context.Context, in *positionProtocol.OpenRequest) (*positionProtocol.OpenResponse, error) {
 	if in.Price == (*t.currencyMap)[in.CurrencyName].CurrencyPrice {
 		id1 := uuid.New()
 		position := modelLokal.Position{PositionID: id1, CurrencyName: in.CurrencyName, Amount: in.CurrencyAmount,
@@ -34,20 +34,20 @@ func (t *PositionServer) OpenPosition(ctx context.Context, in *protocolPosition.
 		if err != nil {
 			return nil, err
 		}
-		return &protocolPosition.OpenResponse{PositionID: id.String()}, nil
+		return &positionProtocol.OpenResponse{PositionID: id.String()}, nil
 	}
 	return nil, nil //"price changed current price"
 }
 
 // ClosePosition add transaction
-func (t *PositionServer) ClosePosition(ctx context.Context, in *protocolPosition.CloseRequest) (*protocolPosition.CloseResponse, error) {
+func (t *PositionServer) ClosePosition(ctx context.Context, in *positionProtocol.CloseRequest) (*positionProtocol.CloseResponse, error) {
 	id, err := uuid.Parse(in.PositionID)
 	if err != nil {
-		return &protocolPosition.CloseResponse{}, err
+		return &positionProtocol.CloseResponse{}, err
 	}
 	err = t.Service.ClosePosition(ctx, id, (*t.currencyMap)[in.CurrencyName].CurrencyPrice)
 	if err != nil {
-		return &protocolPosition.CloseResponse{}, err
+		return &positionProtocol.CloseResponse{}, err
 	}
-	return &protocolPosition.CloseResponse{}, nil
+	return &positionProtocol.CloseResponse{}, nil
 }

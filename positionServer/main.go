@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"github.com/AndiVS/broker-api/positionServer/internal/config"
 	modelLokal "github.com/AndiVS/broker-api/positionServer/internal/model"
-	"github.com/AndiVS/broker-api/positionServer/internal/positionServer"
+	"github.com/AndiVS/broker-api/positionServer/internal/positionserver"
 	"github.com/AndiVS/broker-api/positionServer/internal/repository"
 	"github.com/AndiVS/broker-api/positionServer/internal/service"
-	"github.com/AndiVS/broker-api/positionServer/protocolPosition"
+	"github.com/AndiVS/broker-api/positionServer/positionProtocol"
 	"github.com/AndiVS/broker-api/priceServer/model"
 	"github.com/AndiVS/broker-api/priceServer/protocolPrice"
 	"github.com/google/uuid"
@@ -57,7 +57,7 @@ func main() {
 	go getPrices(subList, connectionBuffer, mute, &currencyMap, &positionMap)
 
 	transactionService := service.NewPositionService(recordRepository)
-	transactionServer := positionServer.NewPositionServer(transactionService, mute, &currencyMap)
+	transactionServer := positionserver.NewPositionServer(transactionService, mute, &currencyMap)
 
 	err = runGRPCServer(transactionServer)
 	if err != nil {
@@ -138,7 +138,7 @@ func listen(pool *pgxpool.Pool, positionMap *map[string]map[uuid.UUID]*chan *mod
 	}
 }
 
-func runGRPCServer(recServer protocolPosition.PositionServiceServer) error {
+func runGRPCServer(recServer positionProtocol.PositionServiceServer) error {
 	port := os.Getenv("GRPC_BROKER_PORT")
 	//port := ":8080"
 	listener, err := net.Listen("tcp", port)
@@ -147,7 +147,7 @@ func runGRPCServer(recServer protocolPosition.PositionServiceServer) error {
 	}
 
 	grpcServer := grpc.NewServer()
-	protocolPosition.RegisterPositionServiceServer(grpcServer, recServer)
+	positionProtocol.RegisterPositionServiceServer(grpcServer, recServer)
 	log.Printf("server listening at %v", listener.Addr())
 	if err := grpcServer.Serve(listener); err != nil {
 		log.Fatalf("failed to serve: %v", err)

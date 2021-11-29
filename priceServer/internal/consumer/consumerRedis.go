@@ -6,6 +6,7 @@ import (
 	"github.com/go-redis/redis/v7"
 	"github.com/google/uuid"
 	log "github.com/sirupsen/logrus"
+
 	"sync"
 )
 
@@ -47,7 +48,6 @@ func (s *RedisStream) RedisConsumer() {
 			}
 			s.mu.Unlock()
 			log.Printf("Get new data CurrencyName: %v, CurrencyPrice: %v, Time: %v", cur.CurrencyName, cur.CurrencyPrice, cur.Time)
-
 		}
 	}
 }
