@@ -61,27 +61,6 @@ func main() {
 
 }
 
-/*func (s *PositionServer)menu() error {
-	reader := bufio.NewReader(os.Stdin)
-
-	for {
-		char, _, err := reader.ReadRune()
-
-		if err != nil {
-			log.Println(err)
-		}
-
-		switch char {
-		case 1:
-			s.OpenPosition("BTC", 64)
-		case 2:
-			s.ClosePosition("edb6fbe3-e27e-49f6-a19e-8647d9f40e1d", "BTC")
-		case 3:
-			return nil
-		}
-	}
-}*/
-
 func (s *PositionServer) connectToPositionServer() {
 	//addressGRPC := os.Getenv("GRPC_BROKER_ADDRESS")
 	addressGrcp := "localhost:8080"
