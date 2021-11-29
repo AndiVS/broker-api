@@ -44,7 +44,7 @@ func main() {
 	currencyMap := map[string]*model.Currency{}
 
 	mute := new(sync.Mutex)
-	connectionBuffer := connectToBuffer()
+	connectionBuffer := connectToPriceServer()
 	subList := []string{"BTC", "ETH"}
 	go getPrices(subList, connectionBuffer, mute, currencyMap)
 
@@ -96,7 +96,7 @@ func listen(pool *pgxpool.Pool) {
 	}
 	defer conn.Release()
 
-	_, err = conn.Exec(context.Background(), "listen transactions")
+	_, err = conn.Exec(context.Background(), "listen positions")
 	if err != nil {
 		log.Println("Error listening to transactions channel:", err)
 	}
@@ -129,9 +129,10 @@ func runGRPCServer(recServer protocolPosition.PositionServiceServer) error {
 	return grpcServer.Serve(listener)
 }
 
-func connectToBuffer() protocolPrice.CurrencyServiceClient {
+func connectToPriceServer() protocolPrice.CurrencyServiceClient {
 	//addressGrcp := fmt.Sprintf("%s%s", os.Getenv("GRPC_BUFFER_HOST"), os.Getenv("GRPC_BUFFER_PORT"))
 	addressGrcp := "172.28.1.9:8081"
+
 	con, err := grpc.Dial(addressGrcp, grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
 		log.Fatal("cannot dial server: ", err)

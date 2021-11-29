@@ -11,6 +11,8 @@ import (
 	"time"
 )
 
+const timeFormat = "2006-01-02 15:04:05.000000000"
+
 var (
 	// ErrNotFound means entity is not found in repository
 	ErrNotFound = errors.New("not found")
@@ -49,7 +51,7 @@ func (repos *Postgres) OpenPosition(c context.Context, position *model.Position)
 func (repos *Postgres) ClosePosition(c context.Context, id *uuid.UUID, closePrice *float32) error {
 	_, err := repos.Pool.Exec(c,
 		"UPDATE positions SET close_price = $2, close_time = $3 WHERE position_id = $1",
-		id, closePrice, time.Now().String())
+		id, closePrice, time.Now().Format(timeFormat))
 
 	if err != nil {
 		log.Errorf("Failed updating data in db: %s\n", err)

@@ -3,24 +3,86 @@ package main
 import (
 	"context"
 	"github.com/AndiVS/broker-api/positionServer/protocolPosition"
+	"github.com/AndiVS/broker-api/priceServer/model"
 	"github.com/AndiVS/broker-api/priceServer/protocolPrice"
 	"google.golang.org/grpc"
 	"io"
 	"log"
+	"sync"
+	"time"
 )
 
-func main() {
-	connectionPriceServer := connectToPriceServer()
+type PriceServer struct {
+	subList     []string
+	connection  protocolPrice.CurrencyServiceClient
+	currencyMap *map[string]*model.Currency
+	mutex       *sync.Mutex
+}
 
+type PositionServer struct {
+	connection  protocolPosition.PositionServiceClient
+	currencyMap *map[string]*model.Currency
+	mutex       *sync.Mutex
+	positionMap map[string]map[string]bool
+}
+
+func (s *PositionServer) createPositionMap(sublist []string) {
+	s.positionMap = make(map[string]map[string]bool)
+	for _, v := range sublist {
+		s.positionMap[v] = map[string]bool{}
+	}
+}
+
+func main() {
+	mute := new(sync.Mutex)
 	subList := []string{"BTC", "ETH", "YFI"}
-	go subscribeToCurrency(subList, connectionPriceServer)
+	curMap := make(map[string]*model.Currency)
+
+	priceServ := PriceServer{
+		subList:     subList,
+		currencyMap: &curMap,
+		mutex:       mute,
+	}
+	priceServ.connectToPriceServer()
+
+	posServ := PositionServer{
+		currencyMap: &curMap,
+		mutex:       mute,
+	}
+	posServ.connectToPositionServer()
+	posServ.createPositionMap(subList)
+
+	go priceServ.subscribeToCurrency()
+
 	//unsubscribeFromCurrency("ETH",subMap)
-	connectionPositionServer := connectToPositionServer()
-	OpenPosition(connectionPositionServer, "BTC", 64)
+	time.Sleep(5 * time.Second)
+	//posServ.OpenPosition("BTC", 64)
+	posServ.ClosePosition("87236c7f-69b9-46e5-b37c-693830280305", "BTC")
 
 }
 
-func connectToPositionServer() protocolPosition.PositionServiceClient {
+/*func (s *PositionServer)menu() error {
+	reader := bufio.NewReader(os.Stdin)
+
+	for {
+		char, _, err := reader.ReadRune()
+
+		if err != nil {
+			log.Println(err)
+		}
+
+		switch char {
+		case 1:
+			s.OpenPosition("BTC", 64)
+		case 2:
+			s.ClosePosition("edb6fbe3-e27e-49f6-a19e-8647d9f40e1d", "BTC")
+		case 3:
+			return nil
+		}
+	}
+}*/
+
+func (s *PositionServer) connectToPositionServer() {
 	//addressGRPC := os.Getenv("GRPC_BROKER_ADDRESS")
 	addressGrcp := "localhost:8080"
 	con, err := grpc.Dial(addressGrcp, grpc.WithInsecure(), grpc.WithBlock())
@@ -28,32 +90,44 @@ func connectToPositionServer() protocolPosition.PositionServiceClient {
 		log.Fatal("cannot dial server: ", err)
 	}
 
-	return protocolPosition.NewPositionServiceClient(con)
+	s.connection = protocolPosition.NewPositionServiceClient(con)
 }
 
-func connectToPriceServer() protocolPrice.CurrencyServiceClient {
+func (s *PriceServer) connectToPriceServer() {
 	//addressGrcp := os.Getenv("GRPC_BUFFER_ADDRESS")
 	addressGrcp := "172.28.1.9:8081"
-	//addressGrcp := "localhost:8081"
+	//addressGrcp := ":8081"
 	con, err := grpc.Dial(addressGrcp, grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
 		log.Fatal("cannot dial server: ", err)
 	}
 
-	return protocolPrice.NewCurrencyServiceClient(con)
+	s.connection = protocolPrice.NewCurrencyServiceClient(con)
 }
 
-func OpenPosition(client protocolPosition.PositionServiceClient, currency string, amount int64) {
-	search, err := client.OpenPosition(context.Background(), &protocolPosition.OpenRequest{CurrencyName: currency, CurrencyAmount: amount})
+func (s *PositionServer) OpenPosition(currency string, amount int64) {
+	open, err := s.connection.OpenPosition(context.Background(), &protocolPosition.OpenRequest{CurrencyName: currency, CurrencyAmount: amount, Price: (*s.currencyMap)[currency].CurrencyPrice})
 	if err != nil {
-		log.Panicf("Error while buying currency: %v", err)
+		log.Panicf("Error while opening position: %v", err)
 	}
-	log.Printf("Transaction completed: %s", search.GetPositionID())
+	s.positionMap[currency][open.GetPositionID()] = false
+	log.Printf("Position open with id: %s", open.GetPositionID())
 }
 
-func subscribeToCurrency(subList []string, client protocolPrice.CurrencyServiceClient) {
-	req := protocolPrice.GetPriceRequest{Name: subList}
-	stream, err := client.GetPrice(context.Background(), &req)
+func (s *PositionServer) ClosePosition(id string, currency string) {
+
+	_, err := s.connection.ClosePosition(context.Background(), &protocolPosition.CloseRequest{PositionID: id, CurrencyName: currency})
+	if err != nil {
+		log.Panicf("Error while closing position: %v", err)
+	}
+
+	s.positionMap[currency][id] = true
+	log.Printf("Position with id: %s closed", id)
+}
+
+func (s *PriceServer) subscribeToCurrency() {
+	req := protocolPrice.GetPriceRequest{Name: s.subList}
+	stream, err := s.connection.GetPrice(context.Background(), &req)
 	if err != nil {
 		log.Fatalf("sub err  %v", err)
 	}
@@ -65,9 +139,11 @@ func subscribeToCurrency(subList []string, client protocolPrice.CurrencyServiceC
 		if err != nil {
 			log.Fatalf("Failed to receive a note : %v", err)
 		}
-
 		log.Printf("Got currency data Name: %v Price: %v at time %v",
 			in.Currency.CurrencyName, in.Currency.CurrencyPrice, in.Currency.Time)
+		s.mutex.Lock()
+		(*s.currencyMap)[in.Currency.CurrencyName] = &model.Currency{CurrencyName: in.Currency.CurrencyName, CurrencyPrice: in.Currency.CurrencyPrice, Time: in.Currency.Time}
+		s.mutex.Unlock()
 	}
 
 }

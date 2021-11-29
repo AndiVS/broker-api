@@ -1,7 +1,7 @@
 syntax = "proto3";
 
 option go_package = "./protocolPosition";
-package protocolBroker;
+package protocolPosition;
 
 message OpenRequest {
   string    currencyName = 1;
