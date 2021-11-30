@@ -10,6 +10,7 @@ COPY go.sum ./
 RUN go mod download
 
 COPY main.go /
+COPY /internal /internal
 
 RUN go build -tags musl ./..
 

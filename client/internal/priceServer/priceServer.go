@@ -1,5 +1,5 @@
-// Package priceserver for working with price server
-package priceserver
+// Package priceServer for working with price server
+package priceServer
 
 import (
 	"context"

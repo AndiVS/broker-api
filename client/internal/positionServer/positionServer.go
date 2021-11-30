@@ -1,5 +1,5 @@
-// Package positionserver for working with position server
-package positionserver
+// Package positionServer for working with position server
+package positionServer
 
 import (
 	"context"
