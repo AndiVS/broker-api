@@ -1,11 +1,7 @@
 /priceServer/.idea/
-/priceServer/vendor/
 /priceGenerator/.idea/
-/priceGenerator/vendor/
 /positionServer/.idea/
-/positionServer/vendor/
 /client/.idea/
-/client/vendor/
 
 # The file containing environment variables
 .env
@@ -29,7 +25,6 @@
 *.out
 
 # Dependency directories (remove the comment below to include it)
-vendor/
 
 Dockerfille
 Makefille

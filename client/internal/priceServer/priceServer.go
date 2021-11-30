@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/AndiVS/broker-api/priceServer/model"
 	"github.com/AndiVS/broker-api/priceServer/priceProtocol"
+	"google.golang.org/grpc"
 	"io"
 	"log"
 	"sync"
@@ -17,13 +18,24 @@ type PriceServer struct {
 	mutex       *sync.Mutex
 }
 
-func NewPriceServer(connection priceProtocol.CurrencyServiceClient, subList []string, currencyMap *map[string]*model.Currency, mutex *sync.Mutex) *PriceServer {
+func NewPriceServer(subList []string, currencyMap *map[string]*model.Currency, mutex *sync.Mutex) *PriceServer {
 	return &PriceServer{
 		subList:     subList,
 		currencyMap: currencyMap,
 		mutex:       mutex,
-		connection:  connection,
+		connection:  connectToPriceServer(),
 	}
+}
+
+func connectToPriceServer() priceProtocol.CurrencyServiceClient {
+	// addressGrcp := os.Getenv("GRPC_BUFFER_ADDRESS")
+	addressGrcp := "172.28.1.9:8081"
+	con, err := grpc.Dial(addressGrcp, grpc.WithInsecure(), grpc.WithBlock())
+	if err != nil {
+		log.Fatal("cannot dial server: ", err)
+	}
+
+	return priceProtocol.NewCurrencyServiceClient(con)
 }
 
 func (s *PriceServer) SubscribeToCurrency() {

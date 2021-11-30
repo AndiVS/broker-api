@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/AndiVS/broker-api/positionServer/positionProtocol"
 	"github.com/AndiVS/broker-api/priceServer/model"
+	"google.golang.org/grpc"
 	"log"
 	"sync"
 )
@@ -16,13 +17,24 @@ type PositionServer struct {
 	positionMap map[string]map[string]bool
 }
 
-func NewPositionServer(connection positionProtocol.PositionServiceClient, subList []string, currencyMap *map[string]*model.Currency, mutex *sync.Mutex) *PositionServer {
+func NewPositionServer(subList []string, currencyMap *map[string]*model.Currency, mutex *sync.Mutex) *PositionServer {
 	return &PositionServer{
 		currencyMap: currencyMap,
 		mutex:       mutex,
-		connection:  connection,
+		connection:  connectToPositionServer(),
 		positionMap: createPositionMap(subList),
 	}
+}
+
+func connectToPositionServer() positionProtocol.PositionServiceClient {
+	// addressGRPC := os.Getenv("GRPC_BROKER_ADDRESS")
+	addressGrcp := "172.28.1.8:8083"
+	con, err := grpc.Dial(addressGrcp, grpc.WithInsecure(), grpc.WithBlock())
+	if err != nil {
+		log.Fatal("cannot dial server: ", err)
+	}
+
+	return positionProtocol.NewPositionServiceClient(con)
 }
 
 func createPositionMap(sublist []string) map[string]map[string]bool {

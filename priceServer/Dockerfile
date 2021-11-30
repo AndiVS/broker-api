@@ -11,7 +11,7 @@ RUN go mod download
 
 COPY main.go /
 COPY /internal /internal
-COPY /protocolPrice /protocolPrice
+COPY /priceProtocol /priceProtocol
 COPY /model /model
 
 

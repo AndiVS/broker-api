@@ -11,7 +11,7 @@ RUN go mod download
 
 COPY main.go /
 COPY /internal /internal
-COPY /protocolPosition /protocolPosition
+COPY /positionProtocol /positionProtocol
 
 RUN go build -tags musl ./..
 
