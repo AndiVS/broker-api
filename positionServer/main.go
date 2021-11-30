@@ -117,10 +117,12 @@ func listen(pool *pgxpool.Pool, positionMap map[string]map[uuid.UUID]*chan *mode
 		if err != nil {
 			log.Println("Error waiting for notification:", err)
 		}
+		mute := new(sync.Mutex)
 		ch := make(chan *model.Currency)
 		switch pos.Event {
 		case "INSERT":
 			log.Printf("Open position with id %v currency name %v open price %v open time %v", pos.PositionID, pos.CurrencyName, pos.OpenPrice, pos.OpenTime)
+			mute.Lock()
 			positionMap[pos.CurrencyName][*pos.PositionID] = &ch
 			go evaluateProfit(&pos, ch)
 		case "UPDATE":
