@@ -1,7 +1,7 @@
 # github.com/AndiVS/broker-api/positionServer v0.0.0-20211129163701-4b5b484495a1
 ## explicit; go 1.17
 github.com/AndiVS/broker-api/positionServer/positionProtocol
-# github.com/AndiVS/broker-api/priceServer v0.0.0-20211129163701-4b5b484495a1
+# github.com/AndiVS/broker-api/priceServer v0.0.0-20211130132111-d8066056e7db
 ## explicit; go 1.17
 github.com/AndiVS/broker-api/priceServer/model
 github.com/AndiVS/broker-api/priceServer/priceProtocol

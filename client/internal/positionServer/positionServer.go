@@ -4,7 +4,6 @@ import (
 	"context"
 	"github.com/AndiVS/broker-api/positionServer/positionProtocol"
 	"github.com/AndiVS/broker-api/priceServer/model"
-	"google.golang.org/grpc"
 	"log"
 	"sync"
 )
@@ -17,25 +16,24 @@ type PositionServer struct {
 	positionMap map[string]map[string]bool
 }
 
-func (s *PositionServer) createPositionMap(sublist []string) {
-	s.positionMap = make(map[string]map[string]bool)
+func NewPositionServer(connection positionProtocol.PositionServiceClient, subList []string, currencyMap *map[string]*model.Currency, mutex *sync.Mutex) *PositionServer {
+	return &PositionServer{
+		currencyMap: currencyMap,
+		mutex:       mutex,
+		connection:  connection,
+		positionMap: createPositionMap(subList),
+	}
+}
+
+func createPositionMap(sublist []string) map[string]map[string]bool {
+	positionMap := make(map[string]map[string]bool)
 	for _, v := range sublist {
-		s.positionMap[v] = map[string]bool{}
+		positionMap[v] = map[string]bool{}
 	}
+	return positionMap
 }
 
-func (s *PositionServer) connectToPositionServer() {
-	// addressGRPC := os.Getenv("GRPC_BROKER_ADDRESS")
-	addressGrcp := "172.28.1.8:8083"
-	con, err := grpc.Dial(addressGrcp, grpc.WithInsecure(), grpc.WithBlock())
-	if err != nil {
-		log.Fatal("cannot dial server: ", err)
-	}
-
-	s.connection = positionProtocol.NewPositionServiceClient(con)
-}
-
-func (s *PositionServer) openPosition(currency string, amount int64) string {
+func (s *PositionServer) OpenPosition(currency string, amount int64) string {
 	open, err := s.connection.OpenPosition(context.Background(),
 		&positionProtocol.OpenRequest{CurrencyName: currency, CurrencyAmount: amount, Price: (*s.currencyMap)[currency].CurrencyPrice})
 	if err != nil {
@@ -46,7 +44,7 @@ func (s *PositionServer) openPosition(currency string, amount int64) string {
 	return open.GetPositionID()
 }
 
-func (s *PositionServer) closePosition(id, currency string) {
+func (s *PositionServer) ClosePosition(id, currency string) {
 	_, err := s.connection.ClosePosition(context.Background(), &positionProtocol.CloseRequest{PositionID: id, CurrencyName: currency})
 	if err != nil {
 		log.Printf("Error while closing position: %v", err)
