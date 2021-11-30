@@ -1,23 +1,26 @@
-package positionServer
+// Package positionserver for working with position server
+package positionserver
 
 import (
 	"context"
+	"log"
+	"sync"
+
 	"github.com/AndiVS/broker-api/positionServer/positionProtocol"
 	"github.com/AndiVS/broker-api/priceServer/model"
 	"google.golang.org/grpc"
-	"log"
-	"sync"
 )
 
 // PositionServer struct for opening and closing a position
 type PositionServer struct {
 	connection  positionProtocol.PositionServiceClient
-	currencyMap *map[string]*model.Currency
+	currencyMap map[string]*model.Currency
 	mutex       *sync.Mutex
 	positionMap map[string]map[string]bool
 }
 
-func NewPositionServer(subList []string, currencyMap *map[string]*model.Currency, mutex *sync.Mutex) *PositionServer {
+// NewPositionServer constructor
+func NewPositionServer(subList []string, currencyMap map[string]*model.Currency, mutex *sync.Mutex) *PositionServer {
 	return &PositionServer{
 		currencyMap: currencyMap,
 		mutex:       mutex,
@@ -45,9 +48,10 @@ func createPositionMap(sublist []string) map[string]map[string]bool {
 	return positionMap
 }
 
+// OpenPosition method that allow open positions
 func (s *PositionServer) OpenPosition(currency string, amount int64) string {
 	open, err := s.connection.OpenPosition(context.Background(),
-		&positionProtocol.OpenRequest{CurrencyName: currency, CurrencyAmount: amount, Price: (*s.currencyMap)[currency].CurrencyPrice})
+		&positionProtocol.OpenRequest{CurrencyName: currency, CurrencyAmount: amount, Price: s.currencyMap[currency].CurrencyPrice})
 	if err != nil {
 		log.Printf("Error while opening position: %v", err)
 	}
@@ -56,6 +60,7 @@ func (s *PositionServer) OpenPosition(currency string, amount int64) string {
 	return open.GetPositionID()
 }
 
+// ClosePosition method that allow close positions
 func (s *PositionServer) ClosePosition(id, currency string) {
 	_, err := s.connection.ClosePosition(context.Background(), &positionProtocol.CloseRequest{PositionID: id, CurrencyName: currency})
 	if err != nil {
