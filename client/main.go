@@ -4,8 +4,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/AndiVS/broker-api/client/internal/positionServer"
-	"github.com/AndiVS/broker-api/client/internal/priceServer"
+	"github.com/AndiVS/broker-api/client/internal/positionserver"
+	"github.com/AndiVS/broker-api/client/internal/priceserver"
 	"github.com/AndiVS/broker-api/priceServer/model"
 )
 
@@ -14,9 +14,9 @@ func main() {
 	subList := []string{"BTC", "ETH", "YFI"}
 	curMap := make(map[string]*model.Currency)
 
-	priceServ := priceServer.NewPriceServer(subList, &curMap, mute)
+	priceServ := priceserver.Newpositionserver(subList, &curMap, mute)
 
-	posServ := positionServer.NewPositionServer(subList, &curMap, mute)
+	posServ := positionserver.Newpositionserver(subList, &curMap, mute)
 
 	go priceServ.SubscribeToCurrency()
 
