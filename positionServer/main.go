@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io"
 	"net"
-	"os"
 	"sync"
 
 	"github.com/AndiVS/broker-api/positionServer/internal/config"
@@ -50,16 +49,16 @@ func main() {
 		"YFI": {},
 	}
 
-	go listen(pool, positionMap)
-
-	mute := new(sync.Mutex)
+	muteCur := new(sync.Mutex)
+	mutePos := new(sync.Mutex)
 	connectionBuffer := connectToPriceServer()
 	subList := []string{"BTC", "ETH"}
-	go getPrices(subList, connectionBuffer, mute, currencyMap, positionMap)
 
 	transactionService := service.NewPositionService(recordRepository)
-	transactionServer := server.NewPositionServer(transactionService, mute, currencyMap)
+	transactionServer := server.NewPositionServer(transactionService, muteCur, currencyMap)
 
+	go listen(pool, positionMap, transactionService, mutePos)
+	go getPrices(subList, connectionBuffer, muteCur, mutePos, currencyMap, positionMap)
 	err = runGRPCServer(transactionServer)
 	if err != nil {
 		log.Printf("err in grpc run %v", err)
@@ -94,7 +93,7 @@ func getPostgres(url string) *pgxpool.Pool {
 	return pool
 }
 
-func listen(pool *pgxpool.Pool, positionMap map[string]map[uuid.UUID]*chan *model.Currency) {
+func listen(pool *pgxpool.Pool, positionMap map[string]map[uuid.UUID]*chan *model.Currency, service service.Positions, mutePos *sync.Mutex) {
 	conn, err := pool.Acquire(context.Background())
 	if err != nil {
 		log.Println("Error acquiring connection:", err)
@@ -117,26 +116,30 @@ func listen(pool *pgxpool.Pool, positionMap map[string]map[uuid.UUID]*chan *mode
 		if err != nil {
 			log.Println("Error waiting for notification:", err)
 		}
-		mute := new(sync.Mutex)
+
 		ch := make(chan *model.Currency)
 		switch pos.Event {
 		case "INSERT":
 			log.Printf("Open position with id %v currency name %v open price %v open time %v", pos.PositionID, pos.CurrencyName, pos.OpenPrice, pos.OpenTime)
-			mute.Lock()
+			mutePos.Lock()
 			positionMap[pos.CurrencyName][*pos.PositionID] = &ch
-			go evaluateProfit(&pos, ch)
+			mutePos.Unlock()
+			go evaluateProfit(&pos, ch, service)
 		case "UPDATE":
 			profit := (*pos.ClosePrice - *pos.OpenPrice) * float32(*pos.Amount)
 			log.Printf("Position id %v close with profit %v", pos.PositionID.String(), profit)
+			mutePos.Lock()
 			close(*positionMap[pos.CurrencyName][*pos.PositionID])
 			delete(positionMap[pos.CurrencyName], *pos.PositionID)
+			mutePos.Unlock()
+
 		}
 	}
 }
 
 func runGRPCServer(recServer positionProtocol.PositionServiceServer) error {
-	port := os.Getenv("GRPC_BROKER_PORT")
-	listener, err := net.Listen("tcp", port)
+	//port := os.Getenv("GRPC_BROKER_PORT")
+	listener, err := net.Listen("tcp", ":8083")
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
@@ -152,8 +155,8 @@ func runGRPCServer(recServer positionProtocol.PositionServiceServer) error {
 }
 
 func connectToPriceServer() priceProtocol.CurrencyServiceClient {
-	addressGrcp := fmt.Sprintf("%s%s", os.Getenv("GRPC_BUFFER_HOST"), os.Getenv("GRPC_BUFFER_PORT"))
-
+	//addressGrcp := fmt.Sprintf("%s%s", os.Getenv("GRPC_BUFFER_HOST"), os.Getenv("GRPC_BUFFER_PORT"))
+	addressGrcp := "172.28.1.9:8081"
 	con, err := grpc.Dial(addressGrcp, grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
 		log.Fatal("cannot dial server: ", err)
@@ -162,7 +165,7 @@ func connectToPriceServer() priceProtocol.CurrencyServiceClient {
 	return priceProtocol.NewCurrencyServiceClient(con)
 }
 
-func getPrices(CurrencyName []string, client priceProtocol.CurrencyServiceClient, mu *sync.Mutex,
+func getPrices(CurrencyName []string, client priceProtocol.CurrencyServiceClient, muteCur, mutePos *sync.Mutex,
 	currencyMap map[string]*model.Currency, positionMap map[string]map[uuid.UUID]*chan *model.Currency) {
 	req := priceProtocol.GetPriceRequest{Name: CurrencyName}
 	stream, err := client.GetPrice(context.Background(), &req)
@@ -179,23 +182,31 @@ func getPrices(CurrencyName []string, client priceProtocol.CurrencyServiceClient
 		}
 
 		cur := model.Currency{CurrencyName: in.Currency.CurrencyName, CurrencyPrice: in.Currency.CurrencyPrice, Time: in.Currency.Time}
-		mu.Lock()
+		muteCur.Lock()
 		currencyMap[cur.CurrencyName] = &cur
+		muteCur.Unlock()
+		mutePos.Lock()
 		for _, v := range positionMap[cur.CurrencyName] {
 			*v <- &cur
 		}
-		mu.Unlock()
+		mutePos.Unlock()
 	}
 }
 
-func evaluateProfit(pos *modelLocal.Position, ch chan *model.Currency) {
+func evaluateProfit(pos *modelLocal.Position, ch chan *model.Currency, service service.Positions) {
 	for {
 		current, ok := <-ch
 		if ok {
+			if (current.CurrencyPrice > *pos.TakeProfit) || (current.CurrencyPrice < *pos.StopLoss) {
+				err := service.ClosePosition(context.Background(), *pos.PositionID, current.CurrencyPrice)
+				if err != nil {
+					log.Printf("ERR IN STOPLOSE/TAKEPROFIT CLOSE %v", err)
+				}
+			}
 			profit := (current.CurrencyPrice - *pos.OpenPrice) * float32(*pos.Amount)
 
 			log.Printf("For position %v, profit %v at time %v   (open price: %v current price %v amount %v)", pos.PositionID, profit,
-				current.Time, pos.OpenPrice, current.CurrencyPrice, pos.Amount)
+				current.Time, *pos.OpenPrice, current.CurrencyPrice, *pos.Amount)
 		} else {
 			return
 		}

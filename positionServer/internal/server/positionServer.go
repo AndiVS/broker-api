@@ -17,25 +17,32 @@ type PositionServer struct {
 	Service     service.Positions
 	mu          *sync.Mutex
 	currencyMap map[string]*model.Currency
+	profileMap  map[uuid.UUID]*modelLocal.Profile
 	*positionProtocol.UnimplementedPositionServiceServer
 }
 
 // NewPositionServer constructor
-func NewPositionServer(Service service.Positions, mu *sync.Mutex, currencyMap map[string]*model.Currency) *PositionServer {
-	return &PositionServer{Service: Service, mu: mu, currencyMap: currencyMap}
+func NewPositionServer(Service service.Positions, mu *sync.Mutex, currencyMap map[string]*model.Currency, profileMap map[uuid.UUID]*modelLocal.Profile) *PositionServer {
+	return &PositionServer{Service: Service, mu: mu, currencyMap: currencyMap, profileMap: profileMap}
 }
 
 // OpenPosition add transaction
 func (t *PositionServer) OpenPosition(ctx context.Context, in *positionProtocol.OpenRequest) (*positionProtocol.OpenResponse, error) {
+	t.mu.Lock()
 	if in.Price == t.currencyMap[in.CurrencyName].CurrencyPrice {
-		id1 := uuid.New()
-		position := modelLocal.Position{PositionID: &id1, CurrencyName: in.CurrencyName, Amount: &in.CurrencyAmount,
-			OpenPrice: &t.currencyMap[in.CurrencyName].CurrencyPrice, OpenTime: t.currencyMap[in.CurrencyName].Time}
-		id, err := t.Service.OpenPosition(ctx, &position)
-		if err != nil {
-			return nil, err
+		if *t.profileMap[idU].Balance > in.Price*float32(in.CurrencyAmount) {
+			*t.profileMap[idU].Balance -= in.Price * float32(in.CurrencyAmount)
+			id1 := uuid.New()
+			t.profileMap[idU].PositionList = append(t.profileMap[idU].PositionList, &id1)
+			position := modelLocal.Position{PositionID: &id1, CurrencyName: in.CurrencyName, Amount: &in.CurrencyAmount,
+				OpenPrice: &t.currencyMap[in.CurrencyName].CurrencyPrice, OpenTime: t.currencyMap[in.CurrencyName].Time, TakeProfit: &in.TakeProfit, StopLoss: &in.StopLoss}
+			id, err := t.Service.OpenPosition(ctx, &position)
+			t.mu.Unlock()
+			if err != nil {
+				return nil, err
+			}
+			return &positionProtocol.OpenResponse{PositionID: id.String()}, nil
 		}
-		return &positionProtocol.OpenResponse{PositionID: id.String()}, nil
 	}
 	return nil, nil
 }

@@ -1,11 +1,14 @@
 CREATE TABLE IF NOT EXISTS positions (
-    position_id UUID PRIMARY KEY,
-    currency_name VARCHAR(64),
-    amount INTEGER,
-    open_price   FLOAT,
-    open_time   VARCHAR(64),
-    close_price   FLOAT,
-    close_time   VARCHAR(64)
+    position_id     UUID PRIMARY KEY,
+    currency_name   VARCHAR(64),
+    amount          INTEGER,
+    open_price      FLOAT,
+    open_time       VARCHAR(64),
+    close_price     FLOAT,
+    close_time      VARCHAR(64),
+    take_profit     FLOAT,
+    stop_loss       FLOAT
+
 );
 
 create or replace function insert_notify()
@@ -16,9 +19,9 @@ declare
 channel text := TG_ARGV[0];
 begin
   PERFORM (
-     with resp(event, position_id, currency_name, amount, open_price, open_time) as
+     with resp(event, position_id, currency_name, amount, open_price, open_time, take_profit, stop_loss) as
      (
-       select TG_OP, NEW.position_id, NEW.currency_name, NEW.amount, NEW.open_price, NEW.open_time
+       select TG_OP, NEW.position_id, NEW.currency_name, NEW.amount, NEW.open_price, NEW.open_time, NEW.take_profit, NEW.stop_loss
      )
      select pg_notify(channel, row_to_json(resp)::text)
        from resp

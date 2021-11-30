@@ -38,8 +38,8 @@ type Positions interface {
 // OpenPosition function for inserting item into table
 func (repos *Postgres) OpenPosition(c context.Context, position *model.Position) (*uuid.UUID, error) {
 	row := repos.Pool.QueryRow(c,
-		"INSERT INTO positions (position_id, currency_name, amount, open_price, open_time) VALUES ($1, $2, $3, $4, $5) RETURNING position_id",
-		position.PositionID, position.CurrencyName, position.Amount, position.OpenPrice, position.OpenTime)
+		"INSERT INTO positions (position_id, currency_name, amount, open_price, open_time, take_profit, stop_loss) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING position_id",
+		position.PositionID, position.CurrencyName, position.Amount, position.OpenPrice, position.OpenTime, position.TakeProfit, position.StopLoss)
 
 	err := row.Scan(&position.PositionID)
 	if err != nil {

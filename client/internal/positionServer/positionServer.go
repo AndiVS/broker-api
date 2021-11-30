@@ -31,7 +31,8 @@ func NewPositionServer(subList []string, currencyMap map[string]*model.Currency,
 
 func connectToPositionServer() positionProtocol.PositionServiceClient {
 	// addressGRPC := os.Getenv("GRPC_BROKER_ADDRESS")
-	addressGrcp := "172.28.1.8:8083"
+	//addressGrcp := "172.28.1.8:8083"
+	addressGrcp := "localhost:8083"
 	con, err := grpc.Dial(addressGrcp, grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
 		log.Fatal("cannot dial server: ", err)
@@ -49,9 +50,10 @@ func createPositionMap(sublist []string) map[string]map[string]bool {
 }
 
 // OpenPosition method that allow open positions
-func (s *PositionServer) OpenPosition(currency string, amount int64) string {
+func (s *PositionServer) OpenPosition(currency string, amount int64, takeProfit, stopLose float32) string {
 	open, err := s.connection.OpenPosition(context.Background(),
-		&positionProtocol.OpenRequest{CurrencyName: currency, CurrencyAmount: amount, Price: s.currencyMap[currency].CurrencyPrice})
+		&positionProtocol.OpenRequest{CurrencyName: currency, CurrencyAmount: amount, Price: s.currencyMap[currency].CurrencyPrice,
+			TakeProfit: s.currencyMap[currency].CurrencyPrice * (1 + takeProfit), StopLoss: s.currencyMap[currency].CurrencyPrice * (1 - stopLose)})
 	if err != nil {
 		log.Printf("Error while opening position: %v", err)
 	}

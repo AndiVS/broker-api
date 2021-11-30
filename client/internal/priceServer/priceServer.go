@@ -32,7 +32,9 @@ func NewPriceServer(subList []string, currencyMap map[string]*model.Currency, mu
 
 func connectToPriceServer() priceProtocol.CurrencyServiceClient {
 	// addressGrcp := os.Getenv("GRPC_BUFFER_ADDRESS")
-	addressGrcp := "172.28.1.9:8081"
+	//	addressGrcp := "172.28.1.9:8081"
+	addressGrcp := "localhost:8009"
+
 	con, err := grpc.Dial(addressGrcp, grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
 		log.Fatal("cannot dial server: ", err)

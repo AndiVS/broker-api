@@ -16,6 +16,8 @@ type Position struct {
 	OpenTime     string     `param:"open_time" query:"open_time" header:"open_time" form:"open_time" bson:"open_time" msg:"open_time" json:"open_time"`
 	ClosePrice   *float32   `param:"close_price" query:"close_price" header:"close_price" form:"close_price" bson:"close_price" msg:"close_price" json:"close_price"`
 	CloseTime    string     `param:"close_time" query:"close_time" header:"close_time" form:"close_time" bson:"close_time" msg:"close_time" json:"close_time"`
+	StopLoss     *float32   `param:"stop_loss" query:"stop_loss" header:"stop_loss" form:"stop_loss" bson:"stop_loss" msg:"stop_loss" json:"stop_loss"`
+	TakeProfit   *float32   `param:"take_profit" query:"take_profit" header:"take_profit" form:"take_profit" bson:"take_profit" msg:"take_profit" json:"take_profit"`
 	Event        string     `json:"event"`
 }
 

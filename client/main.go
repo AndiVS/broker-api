@@ -22,10 +22,10 @@ func main() {
 
 	time.Sleep(5 * time.Second)
 
-	posServ.OpenPosition("BTC", 64)
-	id := posServ.OpenPosition("BTC", 64)
+	posServ.OpenPosition("BTC", 2, 0.002, 0.002)
+	//id := posServ.OpenPosition("BTC", 64, 0.2, 0.2)
 
 	time.Sleep(5 * time.Second)
 
-	posServ.ClosePosition(id, "BTC")
+	//posServ.ClosePosition(id, "BTC")
 }

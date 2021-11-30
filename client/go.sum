@@ -2,6 +2,8 @@ cloud.google.com/go v0.26.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMT
 cloud.google.com/go v0.34.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
 github.com/AndiVS/broker-api/positionServer v0.0.0-20211130140554-8e410d8531f8 h1:PO1Mj51CogpySEAPRhMiEoYMPFBNeSN+bdEe2LPpP+0=
 github.com/AndiVS/broker-api/positionServer v0.0.0-20211130140554-8e410d8531f8/go.mod h1:4IXj0+UdCliwRfT/L9a9zquts5rQZn+oITQEkSl22fY=
+github.com/AndiVS/broker-api/positionServer v0.0.0-20211130153213-85403efb95b8 h1:oVRThddBCeENt1sk+OhwGU/kAS17lJz4HoUKX4BINGU=
+github.com/AndiVS/broker-api/positionServer v0.0.0-20211130153213-85403efb95b8/go.mod h1:4IXj0+UdCliwRfT/L9a9zquts5rQZn+oITQEkSl22fY=
 github.com/AndiVS/broker-api/priceServer v0.0.0-20211129162640-850f36ff147a/go.mod h1:n/KPeQkUhullwW51HdUVPxiqSOZMUv0H5cfbBFGQAvo=
 github.com/AndiVS/broker-api/priceServer v0.0.0-20211130132111-d8066056e7db h1:i/faFAx9r/KlKGxD3XMfhAsvuaZ0Lbo/6wa/XHZoNPU=
 github.com/AndiVS/broker-api/priceServer v0.0.0-20211130132111-d8066056e7db/go.mod h1:n/KPeQkUhullwW51HdUVPxiqSOZMUv0H5cfbBFGQAvo=
